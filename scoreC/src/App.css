@@ -1,0 +1,26 @@
+.login-box{
+    width:400px;
+    height: 200px;
+    display: block;
+    margin: 200px auto 0 auto;
+    background-color: white;
+}
+
+.login-btn{
+    width:360px;
+    position: relative;
+    left: 20px;
+}
+
+.login-btn-box{
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.login-acnt{
+    width: 360px;
+    height: 80px;
+    display: block;
+    margin:0px auto 0px auto;
+}

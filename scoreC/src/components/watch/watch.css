@@ -1,0 +1,50 @@
+.watch-funbtn{
+    display: inline-block;
+    margin-left: 50px;
+}
+
+.watch-info{
+    width: 100%;
+    height: 300px;
+    background-color:white;
+}
+
+.watch-h1{
+    margin: 0px;
+}
+
+.watch-gpname{
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.watch-audits{
+    display: block;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.watch-audit{
+    display: inline-block;
+    width: 150px;
+    height: 400px;
+    margin-right: 50px;
+}
+
+.watch-final-score {
+    width: 200px;
+    height: 50px;
+    font-size: 2em;
+    margin:0px auto 0px auto;
+}
+
+.charts {
+    width: 50%;
+    height: 100px;
+}
+
+#container {
+    display: none;
+    margin: 100px auto 0px auto;
+}
