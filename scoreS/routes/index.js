@@ -75,9 +75,11 @@ function isValid(data){
 
   if( data.length > 2){
     result -= max + min;
-    result /= data.length-2;
+    result /= data.length - 2;
   }else{
-    result /= data.length;
+    if( data.length !== 0 ){
+      result /= data.length;
+    }
   }
   
   return {max, min, max_index, min_index, result};
