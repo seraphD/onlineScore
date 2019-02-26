@@ -57,7 +57,6 @@ var config_line={
         series: {
             stacking: 'normal',
             dataLabels: {
-                enabled: true,
                 style: {
                     textOutline: 'none'
                 }
@@ -97,7 +96,8 @@ const styles = theme => ({
       outline: 'none',
     },
     buttonInModal: {
-        marginTop: 60,
+        position: 'absolute',
+        top: 160,
         marginLeft:50,
     },
     button: {
@@ -259,26 +259,17 @@ class Watch extends Component{
     }
 
     score = () =>{
-        if(this.state.log.length === 0){
+        axios.post(config.URL_S+'score', {score:this.state.log, cur:this.state.cur})
+        .then(res =>{
+            let data = res.data.result;
+
             this.setState({
-                finalScore: 0,
+                finalScore: data.result,
                 scoreBtn: true,
                 nextBtn: false,
                 open: false,
             })
-        }else{
-            axios.post(config.URL_S+'score', {score:this.state.log, cur:this.state.cur})
-            .then(res =>{
-                let data = res.data.result;
-
-                this.setState({
-                    finalScore: data.result,
-                    scoreBtn: true,
-                    nextBtn: false,
-                    open: false,
-                })
-            })
-        }
+        })
 
         this.socket.emit('scoreOver');
     }
