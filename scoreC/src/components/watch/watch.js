@@ -259,17 +259,26 @@ class Watch extends Component{
     }
 
     score = () =>{
-        axios.post(config.URL_S+'score', {score:this.state.log, cur:this.state.cur})
-        .then(res =>{
-            let data = res.data.result;
-
+        if(this.state.log.length === 0){
             this.setState({
-                finalScore: data.result,
+                finalScore: 0,
                 scoreBtn: true,
                 nextBtn: false,
                 open: false,
             })
-        })
+        }else{
+            axios.post(config.URL_S+'score', {score:this.state.log, cur:this.state.cur})
+            .then(res =>{
+                let data = res.data.result;
+
+                this.setState({
+                    finalScore: data.result,
+                    scoreBtn: true,
+                    nextBtn: false,
+                    open: false,
+                })
+            })
+        }
 
         this.socket.emit('scoreOver');
     }
