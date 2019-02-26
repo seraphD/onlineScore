@@ -353,10 +353,15 @@ class Watch extends Component{
         var info = this.state.data[parseInt(cur)];
         return(
             <div>
+            <div className="watch-basic-info">
                 <h1 className='watch-h1'>正在给第{cur+1}个小组打分</h1>
                 <h1 className='watch-h1'>小组产品名：{info.title}</h1>
                 <h2 className='watch-h1'>小组Github地址：<a href={info.github} target="blank">{info.github}</a></h2>
-                <div className='watch-final-score'>最终得分:{this.state.finalScore}</div>
+                {/* <div className='watch-final-score'>最终得分:{this.state.finalScore}</div> */}
+            </div>
+            <div className="watch-final-score">
+                {this.state.finalScore}
+            </div>
             </div>
         )
     }
@@ -412,7 +417,7 @@ class Watch extends Component{
                         </Toolbar>
                     </AppBar>
                     <div className='watch-info'>
-                        {this.state.wait?<h1 className='watch-h1'>正在等待评委登录...</h1>:<div/>}
+                        {this.state.wait?<h1 className='watch-wait'>正在等待评委登录...</h1>:<div/>}
                         {this.state.start?<div>{this.showGroup(this.state.cur)}</div>:<div/>}
                     </div>
                     <div className='watch-audits'>
