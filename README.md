@@ -1,10 +1,10 @@
 # 在线评分系统
 
 技术栈：
-- React
-- meterial-UI
-- express
-- socket.io
+- React设计前端交互页面
+- 用meterial-UI框架进行美化
+- 用express实现后端
+- socket.io实现不同页面之间的信息交互
 
 # 实现的功能
 
