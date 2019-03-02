@@ -2,6 +2,7 @@
 
 技术栈：
 - 用React和meterial-UI设计前端交互页面
+- 用react-router进行不同页面的跳转
 - 用express实现后端，处理打分的结果返回前端
 - socket.io实现不同页面之间的信息交互
 
