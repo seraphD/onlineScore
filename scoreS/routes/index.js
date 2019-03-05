@@ -27,12 +27,15 @@ var data = [
   {"id":"16","member":"李博乐、孔昊东 ","title":" 影视推荐","github":"https://github.com/eliotkong/web_movie_hznu","mobile":"15990184818","login":"0","grade":"0"}
   ]
 
-var _headers = ["id","title","score"];
 var record = [];
 var connect = [];
 var cur = -1;
+var finish = 1;
+var confirm = 0;
+var tempLog = [];
+var tempScore = 0;
 
-function reconnect(number){
+function Reconnect(number){
   var auth = 0;
 
   for(let i=0; i < connect.length;i++){
@@ -93,15 +96,20 @@ router.post('/init', (req, res, next)=> {
   for(let i=0; i < data.len; i++ ){
     data[i].login=0;
   }
+
+  if(finish !== 1){
+    connect = [];
+  }
+
   start = 1;
+  finish = 0;
   record = [];
-  connect = [];
   cur = -1;
   res.end();
 });
 
 router.post('/getData', (req, res, next)=> {
-  res.json({data});
+  res.json({data,finish});
 })
 
 router.post('/curData', (req, res, next)=>{
@@ -114,6 +122,9 @@ router.post('/curData', (req, res, next)=>{
 })
 
 router.post('/start', (req, res, next)=>{
+  const {log} = req.body;
+
+  tempLog = log;
   reconnect = 1;
   cur += 1;
   res.end();
@@ -149,20 +160,27 @@ router.post('/login', (req, res) => {
       }
     }
   }else if(reconnect === 1){
-    auth = reconnect(number);
+    auth = Reconnect(number);
   }
 
   res.json({auth});
 })
 
 router.post('/next', (req, res, next)=>{
+  const {log} = req.body;
+
+  tempLog = log;
   cur += 1;
+  confirm = 0;
   res.end();
 })
 
 router.post('/score', (req, res, next)=>{
-  const {score, cur} = req.body;
+  const {score, cur, log} = req.body;
   var valid = isValid(score);
+  confirm = 1;
+  tempScore = valid.result;
+  tempLog = log;
 
   let temp = {
     id: cur, 
@@ -178,6 +196,7 @@ router.post('/score', (req, res, next)=>{
 
 router.post('/finish', (req, res, next)=>{
   start = 0;
+  finish = 1;
   var catagory = [];
   var grade = [];
 
@@ -189,6 +208,11 @@ router.post('/finish', (req, res, next)=>{
   }
 
   res.json({record,catagory,grade});
+})
+
+router.post('/reStart', (req, res, next)=>{
+  console.log(tempLog);
+  res.json({cur, confirm, tempLog, tempScore});
 })
 
 module.exports = router;
