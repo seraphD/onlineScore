@@ -111,12 +111,13 @@ class Watch extends Component{
         super(props);
         this.socket = io(config.URL_S);
         this.state = {
-            wait:false,
-            start:false,
-            cur:0,
-            log:[],
-            data:[],
-            finalScore:0,
+            wait: false,
+            start: false,
+            cur: 0,
+            log: [],
+            data: [],
+            offLine: [],
+            finalScore: 0,
             chartsData: config_line,
             initialBtn: false,
             startBtn: true,
@@ -124,16 +125,25 @@ class Watch extends Component{
             nextBtn: true,
             finishBtn: true,
             visible: false,
-            open:false
+            open: false,
+            scContinue: false,
         }
     }
 
     componentWillMount(){
         axios.post(config.URL_S+'getData')
         .then(res => {
+            const {data,finish} = res.data;
+
             this.setState({
-                data:res.data.data
+                data: data
             })
+
+            if(finish === 0){
+                this.setState({
+                    scContinue: true
+                })
+            }
         })
     }
 
@@ -147,21 +157,47 @@ class Watch extends Component{
         return -1;
     }
 
+    isInOffLine = (name) =>{
+        let index = -1;
+        let offLine = this.state.offLine;
+        console.log(offLine);
+
+        for(let i=0;i<offLine.length;i++){
+            if(name === offLine[i].name){
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
     componentDidMount(){
         this.socket.on('newAudit', (audit)=>{
             if(audit !== 'no'){
                 let index = this.findAudit(audit);
                 if(index === -1){
-                    var temp = this.state.log;
-                    let newAudit = {
-                        name:audit,
-                        score:[0,0,0,0,0,0]
+                    let offA = this.isInOffLine(audit);
+                    let temp = this.state.log;
+                    if(offA === -1){
+                        let newAudit = {
+                            name: audit,
+                            score: [0,0,0,0,0,0],
+                            confirm: 0,
+                        }
+                        
+                        temp.push(newAudit);
+                        this.setState({
+                            log: temp,
+                        })
+                    }else{
+                        let newAudit = this.state.offLine[offA];
+                        
+                        temp.push(newAudit);
+                        this.setState({
+                            log: temp,
+                        })
+                        alert('一位打分者重新进入了系统');
                     }
-                    
-                    temp.push(newAudit);
-                    this.setState({
-                        log:temp
-                    })
                 }
             }
         })
@@ -175,6 +211,8 @@ class Watch extends Component{
                 let temp = this.state.log;
                 if(id !== -1){
                     temp[id].score = score;
+                    temp[id].confirm = 1;
+
                     this.setState({
                         log: temp
                     })
@@ -185,17 +223,32 @@ class Watch extends Component{
         this.socket.on('askContinue', (o)=>{
             const {name} = o;
             let id = this.findAudit(name);
-            console.log(id+" "+name);
 
             if(id !== -1){
-                let score = this.state.log[id].score;
+                let c = this.state.log[id].confirm;
 
                 let ans = 0;
-                if(JSON.stringify(score) === '[0,0,0,0,0,0]'){
+                if(c === 0){
                     ans = 1;
                 }
                 this.socket.emit('ansContinue',{ans,name});
             }
+        })
+
+        this.socket.on('auditDis',(o)=>{
+            const {index} = o;
+            let temp = this.state.log;
+            let offLine = this.state.offLine;
+            let offAudit = temp[index-1];
+            alert('一位打分者离开了系统');
+
+            offLine.push(offAudit);
+
+            temp.splice(index-1, 1);
+            this.setState({
+                log: temp,
+                offLine: offLine
+            })
         })
     }
 
@@ -212,6 +265,16 @@ class Watch extends Component{
             finalScore:0,
         });
 
+        let temp = this.state.log;
+        for(let i=0;i<temp.length;i++){
+            temp[i].score = [0,0,0,0,0,0];
+            temp[i].confirm = 0;
+        }
+
+        this.setState({
+            log: temp
+        })
+
         axios.post(config.URL_S+'init');
         axios.post(config.URL_S+'audit/init');
         this.socket.emit('init');
@@ -223,23 +286,23 @@ class Watch extends Component{
 
     start = () =>{
         this.setState({
-            wait:false,
-            start:true,
-            cur:0,
+            wait: false,
+            start: true,
+            cur: 0,
             startBtn: true,
             scoreBtn: false,
             finishBtn: false,
         })
         this.socket.emit('score',this.state.data[0]);
-        axios.post(config.URL_S+'start');
+        axios.post(config.URL_S+'start', {log:this.state.log});
     }
 
     isScoreOver = () =>{
         let audits = this.state.log;
         for(let i=0;i<audits.length;i++){
-            let score = audits[i].score;
+            let c = audits[i].confirm;
             
-            if(JSON.stringify(score) === '[0,0,0,0,0,0]'){
+            if(c === 0){
                 return -1;
             }
         }
@@ -259,7 +322,7 @@ class Watch extends Component{
     }
 
     score = () =>{
-        axios.post(config.URL_S+'score', {score:this.state.log, cur:this.state.cur})
+        axios.post(config.URL_S+'score', {score:this.state.log, cur:this.state.cur, log:this.state.log})
         .then(res =>{
             let data = res.data.result;
 
@@ -278,6 +341,7 @@ class Watch extends Component{
         var temp = this.state.log;
         for(let audit of temp){
             audit.score = [0,0,0,0,0,0];
+            audit.confirm = 0;
         }
         this.setState({
             log: temp,
@@ -288,14 +352,14 @@ class Watch extends Component{
         var now = this.state.cur;
         if(now < this.state.data.length-1){
             this.setState({
-                cur:now+1,
-                finalScore:0,
+                cur: now+1,
+                finalScore: 0,
                 scoreBtn: false,
                 nextBtn: true,
             })
             let info = this.state.data[now+1];
             this.socket.emit('score',info);
-            axios.post(config.URL_S+'next');
+            axios.post(config.URL_S+'next', {log: this.state.log});
         }else{
             alert('评分完毕');
             this.setState({
@@ -321,6 +385,7 @@ class Watch extends Component{
         this.setState({
             visible: false,
             open: false,
+            scContinue: false
         })
     }
 
@@ -377,6 +442,44 @@ class Watch extends Component{
             height: 150,
             transform: `translate(-${top}%, -${left}%)`,
         };
+    }
+
+    reStart = () =>{
+        axios.post(config.URL_S+'reStart')
+        .then(res =>{
+            let {cur, confirm, tempLog, tempScore} = res.data;
+            
+            if(cur !== -1){
+                this.setState({
+                    cur: cur,
+                    initialBtn: true,
+                    startBtn: true,
+                    start: true,
+                    finishBtn: false,
+                })
+            }
+
+            if(confirm === 1){
+                this.setState({
+                    scoreBtn: true,
+                    nextBtn: false,
+                    scContinue: false,
+                    log: tempLog,
+                    finalScore: tempScore,
+                })
+            }else{
+                this.setState({
+                    scoreBtn: false,
+                    nextBtn: true,
+                    scContinue: false,
+                    log: tempLog,
+                })
+            }
+
+            $('.watch-info').show();
+            $('.watch-audits').show();
+            $('#container').hide();
+        })
     }
  
     render(){
@@ -489,6 +592,22 @@ class Watch extends Component{
                         <Typography variant="h6" id="modal-title" className={classes.buttonInModal}>
                         <Button variant="contained" color="default" className={classes.button} onClick={this.handleClose}>取消</Button>
                         <Button variant="contained" color="primary" className={classes.button} onClick={this.score}>确认</Button>
+                        </Typography>
+                    </div>
+                </Modal>
+                <Modal
+                    aria-labelledby="simple-modal-title"
+                    aria-describedby="simple-modal-description"
+                    open={this.state.scContinue} 
+                    onClose={this.handleClose}
+                >
+                    <div className={classes.paper} style={this.ModalStyle()}>
+                        <Typography variant="h6" id="modal-title">
+                        上一次打分还没有结束，是否继续?
+                        </Typography>
+                        <Typography variant="h6" id="modal-title" className={classes.buttonInModal}>
+                        <Button variant="contained" color="default" className={classes.button} onClick={this.handleClose}>取消</Button>
+                        <Button variant="contained" color="primary" className={classes.button}  onClick={this.reStart}>确认</Button>
                         </Typography>
                     </div>
                 </Modal>

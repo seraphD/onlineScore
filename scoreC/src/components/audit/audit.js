@@ -13,18 +13,18 @@ class Audit extends Component{
     constructor(props){
         super(props);
         this.state = {
-            id:-1,
-            score:[0,0,0,0,0,0],
-            name:'',
-            info:{},
+            id: -1,
+            score: [0,0,0,0,0,0],
+            name: '',
+            info: {},
             confirm : true,
             time: 300,
             timeLeft: 0,
         }
     }
 
-    static contextTypes ={
-        router:PropTypes.object,
+    static contextTypes = {
+        router: PropTypes.object,
   	}
 
     componentWillMount(){
@@ -104,6 +104,7 @@ class Audit extends Component{
         this.socket.on('auditInit',()=>{
             this.setState({
                 info: {},
+                score: [0,0,0,0,0,0]
             })
         })
 
@@ -116,7 +117,7 @@ class Audit extends Component{
 
         this.socket.on('ansIsContinue', (o)=>{
             const {ans,name} = o;
-            console.log(ans+" "+name);
+
             if(name === this.state.name && ans === 1){
                 let time = 120;
 
@@ -145,7 +146,6 @@ class Audit extends Component{
         // let name = this.state.name;
         // console.log(this.state);
         // this.socket.emit('auditLogout',{name});
-        this.socket.emit('disconnect',{name:this.state.name});
     }
 
     confirm = () =>{
@@ -226,7 +226,7 @@ class Audit extends Component{
 
 function mapStateToProps(state){
     return{
-      num:state.number,
+      num: state.number,
     }
 }
   
