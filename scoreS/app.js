@@ -7,6 +7,7 @@ const cores = require('cors');
 
 var indexRouter = require('./routes/index');
 var auditRouter = require('./routes/audit');
+var mainRouter = require('./routes/main');
 
 var app = express();
 app.use(cores());
@@ -33,6 +34,7 @@ app.use(express.static(path.join(__dirname, 'download')));
 
 app.use('/', indexRouter);
 app.use('/audit', auditRouter);
+app.use('/main', mainRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

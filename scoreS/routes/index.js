@@ -2,6 +2,7 @@ var express = require('express');
 var fs = require('fs');
 var path = require('path');
 var mime = require('mime');
+var db = require('./db/mysql');
 var router = express.Router();
 var start = 0;
 var XLSX = require('xlsx');
@@ -91,6 +92,10 @@ function isValid(data){
 router.get('/', (req, res, next)=> {
   
 });
+
+router.post('/dbtest', (req,res,next)=>{
+  s
+})
 
 router.post('/init', (req, res, next)=> {
   for(let i=0; i < data.len; i++ ){
