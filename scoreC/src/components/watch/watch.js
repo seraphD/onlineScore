@@ -160,7 +160,6 @@ class Watch extends Component{
     isInOffLine = (name) =>{
         let index = -1;
         let offLine = this.state.offLine;
-        console.log(offLine);
 
         for(let i=0;i<offLine.length;i++){
             if(name === offLine[i].name){

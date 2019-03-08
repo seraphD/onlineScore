@@ -13,6 +13,7 @@ import logger from 'redux-logger';
 import appReducer from './components/reducers/index';
 import rootSaga from './components/sagas/index';
 import * as serviceWorker from './serviceWorker';
+import MainLayout from './components/main';
 
 const sagaMiddleware=createSagaMiddleware();
 const middlewares=[sagaMiddleware,logger];
@@ -25,6 +26,7 @@ const Page=withRouter((props)=>{
 		<Switch>
             <Route path='/watch' component={require_auth(Watch)}/>
             <Route path='/audit' component={require_auth(Audit)}/>
+			<Route path='/main' component={MainLayout}/>
 			<Route path='/' component={App}/>
 		</Switch>
 		);
