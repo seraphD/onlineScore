@@ -10,17 +10,21 @@ import Score from './container/score';
 import axios from 'axios';
 import config from '../config';
 import {connect} from 'react-redux';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import InboxIcon from '@material-ui/icons/Inbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
 
 const styles = theme =>({
     root:{
         width: '100%',
+        height: 'auto'
     },
     bar: {
         display: 'inline-block',
         backgroundColor: '#424242',
         width: 250,
-        height: 'auto',
-        minHeight: 752,
+        minHeight: 753,
+        height: 'calc(100%)',
     },
     title: {
         color: 'white',
@@ -50,10 +54,8 @@ const styles = theme =>({
     container: {
         display: 'inline-block',
         width: 1265,
-        minHeight:700,
-        margin: '50px 0 0 20px',
         float: 'right',
-    }
+    },
 })
 
 const Container=withRouter((props)=>{
@@ -110,10 +112,13 @@ class MainLayout extends  Component{
                         selected={this.state.selectedIndex === 0}
                         onClick={event => this.handleListItemClick(event, 0)}
                     >
+                    <ListItemIcon>
+                    <InboxIcon />
+                    </ListItemIcon>
                     <ListItemText 
                         classes={{primary:classes.listItemText}}
                         primary="打分" 
-                    />
+                    />  
                     </ListItem>
                     <ListItem
                         classes={{ root: classes.listItem, selected: classes.selected }}
@@ -121,6 +126,9 @@ class MainLayout extends  Component{
                         selected={this.state.selectedIndex === 1}
                         onClick={event => this.handleListItemClick(event, 1)}
                     >
+                    <ListItemIcon>
+                        <DraftsIcon />
+                    </ListItemIcon>
                     <ListItemText 
                         classes={{ primary: classes.listItemText }}
                         primary="小组管理" />
