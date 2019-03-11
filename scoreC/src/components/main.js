@@ -21,7 +21,7 @@ const styles = theme =>({
     },
     bar: {
         display: 'inline-block',
-        backgroundColor: '#424242',
+        backgroundColor: '#757575',
         width: 250,
         minHeight: 753,
         height: 'calc(100%)',
@@ -35,11 +35,11 @@ const styles = theme =>({
     },
     Divider: {
         color: 'white',
-        width: '80%',
+        width: '90%',
         margin: '0 auto 0 auto',
     },
     listItemText: {
-        fontSize:'1em',//Insert your required size
+        fontSize:'1em',
         color: 'white'
     },
     listItem: {
@@ -47,7 +47,7 @@ const styles = theme =>({
         marginLeft: 'auto',
         marginRight: 'auto',
         "&$selected, &$selected:hover, &$selected:focus": {
-            backgroundColor: "#2962ff"
+            backgroundColor: "#1e88e5"
         },
     },
     selected: {},
@@ -83,18 +83,17 @@ class MainLayout extends  Component{
         this.setState({ selectedIndex: index });
         let his = this.context.router.history;
 
-        if(index === 1){
-            axios.post(config.URL_S+'main/getGroup')
-            .then(res =>{
-                let data = res.data;
-                this.props.getGroup(data);
-                his.push('/main/group');
-            })
-        }
+        axios.post(config.URL_S+'main/getGroup')
+        .then(res =>{
+            let data = res.data;
+            this.props.getGroup(data);
 
-        if(index === 0){
-            his.push('/main');
-        }
+            if(index === 1){
+                his.push('/main/group');
+            }else{
+                his.push('/main/main');
+            }
+        })
     };
 
     render(){

@@ -18,6 +18,7 @@ const styles = theme =>({
         overflowX: 'hidden',
         overflowY: 'auto',
         height: 752,
+        textAlign: 'top',
     },
     group: {
         width: 270,
@@ -34,7 +35,7 @@ const styles = theme =>({
         height: 80,
         position: 'relative',
         display: 'inline-block',
-        left: '8%',
+        left: '10%',
         top: -20,
         backgroundColor: '#66bb6a'
     },
@@ -50,6 +51,7 @@ const styles = theme =>({
         fontSize: '1.2em',
         width: '20px',
         margin: '25px auto 0 auto',
+        textAlign: 'center',
     },
     number: {
         width: '60%',
@@ -95,6 +97,7 @@ const styles = theme =>({
         borderRadius: 15,
         borderStyle: 'dashed',
         borderColor: '#2196f3',
+        verticalAlign: 'top',
         textAlign: 'center',
     },
     fab: {
@@ -127,7 +130,6 @@ class Group extends Component{
         }
     
         return(
-            <div>
                 <Fab color="primary" aria-label="Add" className={classes.fab} onClick={click}>
                         <AddIcon/>
                         <input type='file' 
@@ -137,7 +139,6 @@ class Group extends Component{
                             onChange={e => handleFileChosen(e.target.files[0])}
                         />
                 </Fab>
-            </div>
         )
     }
 
@@ -146,9 +147,9 @@ class Group extends Component{
 
         return(
             <div className={classes.root}>
-                <div className={classes.appbar}>
+            <div className={classes.appbar}>
 
-                </div>
+            </div>
                 {this.props.group.map((g,i)=>{
                     return(
                         <div key={i} className={classes.container}>
@@ -162,11 +163,14 @@ class Group extends Component{
                                     组名
                                 </Typography>
                                 <Divider className={classes.divider}/>
-                                {g.title}
+                                <Typography  gutterBottom className={classes.groupName}>
+                                    {g.title}
+                                </Typography>
                             </Paper>
                         </div>
                     )
                 })}
+                
                 <div className={classes.add}>
                     {this.ImportFile(classes)}
                 </div>
