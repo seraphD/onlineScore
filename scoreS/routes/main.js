@@ -10,4 +10,11 @@ router.post('/getGroup', (req, res, next)=>{
     db.select(['title','number','grade'],'user',{},res);
 })
 
+router.post('/addGroup', (req, res, next)=>{
+    const {data} = req.body;
+
+    db.insert('user',data);
+    res.end();
+})
+
 module.exports = router;

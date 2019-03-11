@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
 	Mysql select方法
 	第一个参数为要查询的字段,* 表示全部查询，否则用一个数组表示查询的字段 如['id','title']
 	第二个参数为要查询的表，暂时没有表联合功能
-	第三个蚕食为删选条件，用一个对象表示，如 {id:1}
+	第三个参数为删选条件，用一个对象表示，如 {id:1}
 */
 exports.select = (field , table, filter, res) =>{
 	var f = '';
@@ -29,10 +29,9 @@ exports.select = (field , table, filter, res) =>{
 	var fl = '';
 	if(JSON.stringify(filter) !== '{}'){
 		fl = "where";
-		console.log(fl);
+
 		for(var p in filter){
 			fl += p + "=" + filter[p];
-			console.log(fl);
 		}
 		fl.splice(fl.length-1,1);
 	}
@@ -44,4 +43,31 @@ exports.select = (field , table, filter, res) =>{
 			res.json(results);
 		}
 	})
+}
+
+/*
+	Mysql插入函数，table是要插入的表，datas是要插入的记录的数组
+	插入的记录要完全按照表格的格式
+*/
+
+exports.insert = (table,datas) =>{
+	for(var data of datas){
+		let v = "";
+		let value = "";
+
+		for(let p in data){
+			v += p + ',';
+			if(typeof(data[p]) === 'string'){
+				value += `'${data[p]}',`;
+			}else value += `${data[p]},`;
+		}
+
+		v = v.substr(0, v.length-1);
+		value = value.substr(0, value.length-1);
+
+		let sql = `insert into ${table} (${v}) values(${value});`;
+		connection.query(sql, (err, results)=>{
+			if(err)throw err;
+		})
+	}
 }
