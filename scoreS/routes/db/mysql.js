@@ -31,9 +31,9 @@ exports.select = (field , table, filter, res) =>{
 		fl = "where";
 
 		for(var p in filter){
-			fl += p + "=" + filter[p];
+			fl += p + "=" + filter[p] + "&&";
 		}
-		fl.splice(fl.length-1,1);
+		fl.substr(fl.length-2,2);
 	}
 
 	let sql = `select ${f} from ${table} ${fl};`;
@@ -41,6 +41,7 @@ exports.select = (field , table, filter, res) =>{
 		if(err)throw err;
 		else{
 			res.json(results);
+			return results;
 		}
 	})
 }
@@ -70,4 +71,29 @@ exports.insert = (table,datas) =>{
 			if(err)throw err;
 		})
 	}
+}
+
+exports.update = (table,field,filter) => {
+	let set = "";
+	if(JSON.stringify(field) !== '{}'){
+		for(let p in field){
+			set += p + "=" + field[p] + ","; 
+		}
+		set.substr(set.length-1,1);
+	}else return;
+
+	let fl = "";
+	if(JSON.stringify(filter) !== '{}'){
+		fl = "where";
+
+		for(var p in filter){
+			fl += p + "=" + filter[p] + "&&";
+		}
+		fl.substr(fl.length-2,2);
+	}
+
+	let sql = `update ${table} set ${set} ${fl}`;
+	connection.query(sql, (err,results)=>{
+		if(err)throw err;
+	})
 }
