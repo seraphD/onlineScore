@@ -63,6 +63,20 @@ router.post('/getName', function(req, res, next){
   res.json({name});
 })
 
+router.post('/getAllName',async (req, res, next)=>{
+  const {numbers} = req.body;
+  let names = [];
+
+  for(let i=0;i<numbers.length;i++){
+    let name = getName();
+    let num = numbers[i];
+
+    names[num] = name;
+  }
+  
+  res.json({names});
+})
+
 router.post('/score', function(req, res, next) {
   res.end();
 })

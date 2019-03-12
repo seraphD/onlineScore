@@ -10,6 +10,10 @@ import AddIcon from '@material-ui/icons/Add';
 import $ from 'jquery';
 import axios from 'axios';
 import config from '../../config';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import MailIcon from '@material-ui/icons/Mail';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = theme =>({
     root:{
@@ -25,6 +29,9 @@ const styles = theme =>({
         height: 120,
         display: 'inline-block',
         margin: '0 0 0 20px',
+    },
+    groups:{
+        marginTop: 80,
     },
     container: {
         display: 'inline-block',
@@ -85,8 +92,11 @@ const styles = theme =>({
         height: 120,
     },
     appbar: {
-        width: '100%',
+        width: 'calc(100% - 250px)',
         height: 100,
+        position: 'absolute',
+        left: '250px',
+        marginBottom: 100,
     },
     add: {
         width: 260,
@@ -102,7 +112,11 @@ const styles = theme =>({
     },
     fab: {
         margin: '25px 0 0 0',
-    }
+    },
+    sectionDesktop: {
+        width: 150,
+        marginLeft: '85%',
+    },
 })
 
 class Group extends Component{
@@ -148,8 +162,23 @@ class Group extends Component{
         return(
             <div className={classes.root}>
             <div className={classes.appbar}>
-
-            </div>
+                    <div className={classes.sectionDesktop}>
+                        <IconButton color="inherit">
+                            <MailIcon />
+                        </IconButton>
+                        <IconButton color="inherit">
+                            <NotificationsIcon />
+                        </IconButton>
+                        <IconButton
+                            aria-haspopup="true"
+                            onClick={this.handleProfileMenuOpen}
+                            color="inherit"
+                        >
+                            <AccountCircle />
+                        </IconButton>
+                        </div>
+                </div>
+                <div className={classes.groups}>
                 {this.props.group.map((g,i)=>{
                     return(
                         <div key={i} className={classes.container}>
@@ -173,6 +202,7 @@ class Group extends Component{
                 
                 <div className={classes.add}>
                     {this.ImportFile(classes)}
+                </div>
                 </div>
             </div>
         )

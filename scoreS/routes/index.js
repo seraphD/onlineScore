@@ -94,7 +94,7 @@ router.get('/', (req, res, next)=> {
 });
 
 router.post('/dbtest', (req,res,next)=>{
-  s
+  
 })
 
 router.post('/init', (req, res, next)=> {

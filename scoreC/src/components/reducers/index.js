@@ -3,6 +3,7 @@ const initialState={
 	authenticated:false,
 	group: [],
 	newGroup: [],
+	dis: [],
 }
 
 const appReducer = (state=initialState, action)=>{
@@ -16,6 +17,9 @@ const appReducer = (state=initialState, action)=>{
 		}
 		case 'NEW_GROUP': {
 			return {...state, newGroup: action.data}
+		}
+		case 'SET_DIS': {
+			return {...state, dis: action.data}
 		}
 		default: {
 			return {...state}

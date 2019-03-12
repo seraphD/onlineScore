@@ -6,6 +6,10 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import config from '../../config';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import MailIcon from '@material-ui/icons/Mail';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = theme =>({
     root: {
@@ -18,12 +22,14 @@ const styles = theme =>({
     },
     title: {
         textAlign: 'center',
-        margin: '100px 0 0 0',
+        margin: '200px 0 0 0',
         letterSpacing: 20,
     },
     appbar: {
-        width: '100%',
+        width: 'calc(100% - 250px)',
         height: 100,
+        position: 'absolute',
+        left: '250px',
     },
     description: {
         width: '80%',
@@ -37,10 +43,22 @@ const styles = theme =>({
         width: 150,
         textAlign: 'center',
         margin: '50px auto 0 auto',
-    }
+    },
+    sectionDesktop: {
+        width: 150,
+        marginLeft: '85%',
+    },
 })
 
 class Score extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            cur: -1, 
+            dis: [],
+        }
+    }
+
     componentWillMount(){
         let group = this.props.group;
 
@@ -53,13 +71,21 @@ class Score extends Component{
         }
     }
 
+    static contextTypes ={
+        router:PropTypes.object,
+    }
+
     start = () =>{
         let group = this.props.group;
+        let his = this.context.router.history;
 
         axios.post(config.URL_S+'main/random',{group})
         .then(res =>{
             let newGroup = res.data.group;
+            let dis = res.data.dis;
             this.props.newGroup(newGroup);
+            this.props.setDis(dis);
+            his.push('/main/load');
         })
     }
 
@@ -69,7 +95,21 @@ class Score extends Component{
         return(
             <div className={classes.root}>
                 <div className={classes.appbar}>
-
+                    <div className={classes.sectionDesktop}>
+                        <IconButton color="inherit">
+                            <MailIcon />
+                        </IconButton>
+                        <IconButton color="inherit">
+                            <NotificationsIcon />
+                        </IconButton>
+                        <IconButton
+                            aria-haspopup="true"
+                            onClick={this.handleProfileMenuOpen}
+                            color="inherit"
+                        >
+                            <AccountCircle />
+                        </IconButton>
+                        </div>
                 </div>
                 <Typography variant="h2" gutterBottom className={classes.title}>
                     开始打分
@@ -102,6 +142,9 @@ function mapDispatchToProps(dispatch){
       },
       newGroup(data){
         dispatch({type:'NEW_GROUP',data})
+      },
+      setDis(data){
+          dispatch({type:'SET_DIS',data})
       }
     }
 }

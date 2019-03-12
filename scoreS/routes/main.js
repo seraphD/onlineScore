@@ -6,12 +6,24 @@ function randomSort(a,b){
     return Math.random() > 0.5 ? -1: 1;
 }
 
+function findGroup(group,number){
+    let index = -1;
+
+    for(let i=0;i<group.length;i++){
+        if(group[i].number === number){
+            index = i;
+        }
+    }
+
+    return index;
+}
+
 router.post('/', function(req, res, next) {
     
 });
 
 router.post('/getGroup', async (req, res, next)=>{
-    db.select(['title','number','grade'],'user',{},res);
+    db.select(['title','number','github','grade'],'user',{},res);
 })
 
 router.post('/addGroup', (req, res, next)=>{
@@ -23,14 +35,19 @@ router.post('/addGroup', (req, res, next)=>{
 
 router.post('/random',async (req, res, next)=>{
     const {group} = req.body;
-    group.sort(randomSort);
-
-    res.json({group});
-})
-
-router.post('/test', (req,res,next)=>{
-    const {table, field, filter};
+    let pre = group.slice();
+    await group.sort(randomSort);
+    let dis = [];
     
+    for(let i=0;i<group.length;i++){
+        let g = pre[i];
+        let index = group.indexOf(g);
+        
+        dis.push(index - i);
+    }
+
+    res.json({group,dis});
 })
+
 
 module.exports = router;

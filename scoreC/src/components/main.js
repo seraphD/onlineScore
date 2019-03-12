@@ -7,6 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {HashRouter as Router,Route,Switch,withRouter} from 'react-router-dom';
 import Group from './container/group';
 import Score from './container/score';
+import Load from './load/load';
 import axios from 'axios';
 import config from '../config';
 import {connect} from 'react-redux';
@@ -21,10 +22,11 @@ const styles = theme =>({
     },
     bar: {
         display: 'inline-block',
-        backgroundColor: '#757575',
+        backgroundColor: '#424242',
         width: 250,
         minHeight: 753,
         height: 'calc(100%)',
+        
     },
     title: {
         color: 'white',
@@ -56,11 +58,20 @@ const styles = theme =>({
         width: 1265,
         float: 'right',
     },
+    pic: {
+        position: 'absolute',
+        top: -0,
+        width: 250,
+        height: '100%',
+        backgroundImage: "url(../pic/backPic_2.jpg)",
+        zIndex: -1,
+    },
 })
 
 const Container=withRouter((props)=>{
 	return(
 		<Switch>
+            <Route path='/main/load' component={Load}/>
             <Route path='/main/group' component={Group}/>
             <Route path='/main' component={Score}/>
 		</Switch>
@@ -91,7 +102,7 @@ class MainLayout extends  Component{
             if(index === 1){
                 his.push('/main/group');
             }else{
-                his.push('/main/main');
+                his.push('/main');
             }
         })
     };
@@ -133,6 +144,7 @@ class MainLayout extends  Component{
                         primary="小组管理" />
                     </ListItem>
                 </List>
+                <div className={classes.pic}></div>
             </div>
             <div className={classes.container}>
                 <Router>
