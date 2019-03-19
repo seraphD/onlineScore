@@ -10,6 +10,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import IconButton from '@material-ui/core/IconButton';
+import io from 'socket.io-client';
 
 const styles = theme =>({
     root: {
@@ -37,22 +38,24 @@ const styles = theme =>({
     },
     start: {
         width: 150,
+        margin: '0 10px 0 10px',
     },
     btnContainer: {
         dispatch: 'inline-block',
-        width: 150,
-        textAlign: 'center',
+        width: 340,
         margin: '50px auto 0 auto',
     },
     sectionDesktop: {
         width: 150,
-        marginLeft: '85%',
-    },
+        marginLeft: '87.5%',
+    }
 })
 
 class Score extends Component{
     constructor(props){
         super(props);
+        this.socket = io(config.URL_S);
+        this.audits = [];
         this.state = {
             cur: -1, 
             dis: [],
@@ -60,33 +63,39 @@ class Score extends Component{
     }
 
     componentWillMount(){
-        let group = this.props.group;
+        // let group = this.props.group;
 
-        if(group.length === 0){
-            axios.post(config.URL_S+'main/getGroup')
-            .then(res =>{
-                let data = res.data;
-                this.props.getGroup(data);
-            })
-        }
+        // if(group.length === 0){
+        //     axios.post(config.URL_S+'main/getGroup')
+        //     .then(res =>{
+        //         let data = res.data;
+        //         this.props.getGroup(data);
+        //     })
+        // }
+    }
+
+    componentDidMount(){
+        this.socket.on('newAudit', (o)=>{
+            this.audits.push(o);
+        })
     }
 
     static contextTypes ={
-        router:PropTypes.object,
+        router: PropTypes.object,
     }
 
     start = () =>{
-        let group = this.props.group;
         let his = this.context.router.history;
+        let audits = this.audits;
+        let group = this.props.group;
 
-        axios.post(config.URL_S+'main/random',{group})
-        .then(res =>{
-            let newGroup = res.data.group;
-            let dis = res.data.dis;
-            this.props.newGroup(newGroup);
-            this.props.setDis(dis);
-            his.push('/main/load');
-        })
+        this.props.setAudits(audits);
+        this.socket.emit('score',{title: group[0].title,github: group[0].github});
+        his.push('/main/load');
+    }
+
+    startLogin = () =>{
+        axios.post(config.URL_S+'init');
     }
 
     render(){
@@ -109,7 +118,7 @@ class Score extends Component{
                         >
                             <AccountCircle />
                         </IconButton>
-                        </div>
+                    </div>
                 </div>
                 <Typography variant="h2" gutterBottom className={classes.title}>
                     开始打分
@@ -120,7 +129,10 @@ class Score extends Component{
                     评委可以随时结束本次评分，评分结束后会先显示图表，点击右上角图标可以下载xls数据表。
                 </Typography>
                 <div className={classes.btnContainer}>
-                <Button variant="outlined" color="primary" className={classes.start} onClick={this.start}>
+                <Button variant="contained" color="primary" className={classes.start} onClick={this.startLogin}>
+                    开启登录
+                </Button>
+                <Button variant="contained" color="primary" className={classes.start} onClick={this.start}>
                     开始
                 </Button>
                 </div>
@@ -140,11 +152,11 @@ function mapDispatchToProps(dispatch){
       getGroup(data){
         dispatch({type:'GET_GROUP',data});
       },
-      newGroup(data){
-        dispatch({type:'NEW_GROUP',data})
+      setAudits(data){
+        dispatch({type:'SET_AUDITS',data})
       },
-      setDis(data){
-          dispatch({type:'SET_DIS',data})
+      setData(data){
+          dispatch({type:'SET_DATA',data});
       }
     }
 }

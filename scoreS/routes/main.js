@@ -49,5 +49,11 @@ router.post('/random',async (req, res, next)=>{
     res.json({group,dis});
 })
 
+router.post('/getMember',async (req, res, next)=>{
+    const {id} = req.body;
+
+    await db.select(['name'], 'student', {group_id: id}, res);
+})
+
 
 module.exports = router;

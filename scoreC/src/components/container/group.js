@@ -31,7 +31,7 @@ const styles = theme =>({
         margin: '0 0 0 20px',
     },
     groups:{
-        marginTop: 80,
+        
     },
     container: {
         display: 'inline-block',
@@ -93,10 +93,9 @@ const styles = theme =>({
     },
     appbar: {
         width: 'calc(100% - 250px)',
-        height: 100,
-        position: 'absolute',
+        height: 80,
+        position: 'relative',
         left: '250px',
-        marginBottom: 100,
     },
     add: {
         width: 260,
@@ -120,6 +119,13 @@ const styles = theme =>({
 })
 
 class Group extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            group: [],
+        }
+    }
+
     componentDidMount(){
         
     }
@@ -130,7 +136,21 @@ class Group extends Component{
         const handleFileRead = (e) =>{
             const content = fileReader.result;
             let data = JSON.parse(content).groups;
-            axios.post(config.URL_S+'main/addGroup', {data});
+            axios.post(config.URL_S+'main/addGroup', {data})
+            .then(res => {
+                let temp = this.props.group;
+
+                for(let i=0;i<data.lenght;i++){
+                    let d = {
+                        title: data[i].title,
+                        number: data[i].number,
+                        github: data[i].github,
+                        grade: data[i].grade,
+                    }
+                    temp.push(d);
+                }
+                this.props.addGroup(temp);
+            })
         }
 
         const handleFileChosen = (file) =>{
@@ -176,8 +196,8 @@ class Group extends Component{
                         >
                             <AccountCircle />
                         </IconButton>
-                        </div>
-                </div>
+                    </div>
+            </div>
                 <div className={classes.groups}>
                 {this.props.group.map((g,i)=>{
                     return(
@@ -217,7 +237,9 @@ function mapStateToProps(state){
   
 function mapDispatchToProps(dispatch){
     return {
-      
+      addGroup(data){
+        dispatch({type:'GET_GROUP',data});
+      }
     }
 }
 

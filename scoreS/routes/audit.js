@@ -63,18 +63,19 @@ router.post('/getName', function(req, res, next){
   res.json({name});
 })
 
-router.post('/getAllName',async (req, res, next)=>{
-  const {numbers} = req.body;
-  let names = [];
-
+function toNames(names,numbers){
   for(let i=0;i<numbers.length;i++){
     let name = getName();
     let num = numbers[i];
 
     names[num] = name;
   }
-  
-  res.json({names});
+}
+
+router.post('/getAllName',async (req, res, next)=>{
+  let data = [ 'WDM4','HMFY','UYL5','GHME','QY1W','NZHG','T2RA','3ASU','AKV4','LVOD','KTID','CZ1B','NLSE','Z1BU','SSQP','HH3P' ];
+
+  res.send({data});
 })
 
 router.post('/score', function(req, res, next) {

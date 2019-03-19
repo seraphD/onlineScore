@@ -2,8 +2,7 @@ const initialState={
 	number:'123',
 	authenticated:false,
 	group: [],
-	newGroup: [],
-	dis: [],
+	audits: [],
 }
 
 const appReducer = (state=initialState, action)=>{
@@ -13,13 +12,13 @@ const appReducer = (state=initialState, action)=>{
 			return {...state,authenticated:true,number:num};
 		}
 		case 'GET_GROUP': {
-			return {...state, group: action.data}
+			return {...state, group: action.data, length: action.data.length}
 		}
-		case 'NEW_GROUP': {
-			return {...state, newGroup: action.data}
+		case 'SET_AUDITS': {
+			return {...state, audits: action.data}
 		}
-		case 'SET_DIS': {
-			return {...state, dis: action.data}
+		case 'SET_DATA': {
+			return {...state, data: action.data};
 		}
 		default: {
 			return {...state}

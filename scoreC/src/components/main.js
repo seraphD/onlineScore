@@ -14,19 +14,23 @@ import {connect} from 'react-redux';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import InboxIcon from '@material-ui/icons/Inbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
+import pic from '../pic/backPic_2.jpg';
 
 const styles = theme =>({
     root:{
         width: '100%',
-        height: 'auto'
+        height: 'auto',
+    },
+    icon: {
+        color: 'white',
     },
     bar: {
         display: 'inline-block',
-        backgroundColor: '#424242',
+        backgroundColor: '#212121',
         width: 250,
         minHeight: 753,
         height: 'calc(100%)',
-        
+        opacity: 0.9,
     },
     title: {
         color: 'white',
@@ -46,10 +50,12 @@ const styles = theme =>({
     },
     listItem: {
         width: '90%',
+
         marginLeft: 'auto',
         marginRight: 'auto',
         "&$selected, &$selected:hover, &$selected:focus": {
-            backgroundColor: "#1e88e5"
+            backgroundColor: "#42a5f5",
+            borderRadius: '5px',
         },
     },
     selected: {},
@@ -57,13 +63,14 @@ const styles = theme =>({
         display: 'inline-block',
         width: 1265,
         float: 'right',
+        overflowY: 'auto',
     },
     pic: {
         position: 'absolute',
         top: -0,
+        left: -0,
         width: 250,
         height: '100%',
-        backgroundImage: "url(../pic/backPic_2.jpg)",
         zIndex: -1,
     },
 })
@@ -94,26 +101,43 @@ class MainLayout extends  Component{
         this.setState({ selectedIndex: index });
         let his = this.context.router.history;
 
+        if(index === 1){
+            his.push('/main/group');
+        }else his.push('/main');
+
+        // axios.post(config.URL_S+'main/getGroup')
+        // .then(res =>{
+        //     let data = res.data;
+        //     this.props.getGroup(data);
+
+        //     if(index === 1){
+        //         his.push('/main/group');
+        //     }else{
+        //         his.push('/main');
+        //     }
+        // })
+    };
+
+    componentWillMount(){
         axios.post(config.URL_S+'main/getGroup')
         .then(res =>{
             let data = res.data;
             this.props.getGroup(data);
-
-            if(index === 1){
-                his.push('/main/group');
-            }else{
-                his.push('/main');
-            }
         })
-    };
+    }
+
+    componentWillUnmount(){
+        axios.post(config.URL_S+'adminLogout');
+    }
 
     render(){
         const {classes} = this.props;
 
         return(
             <div className={classes.root}>
+            <div className={classes.pic}>
             <div className={classes.bar}>
-                <h1 className={classes.title}>Admin</h1>
+                <h2 className={classes.title}>Admin</h2>
                 <hr className={classes.Divider}/>
                 <List component="nav">
                     <ListItem
@@ -123,7 +147,7 @@ class MainLayout extends  Component{
                         onClick={event => this.handleListItemClick(event, 0)}
                     >
                     <ListItemIcon>
-                    <InboxIcon />
+                        <InboxIcon className={classes.icon}/>
                     </ListItemIcon>
                     <ListItemText 
                         classes={{primary:classes.listItemText}}
@@ -137,14 +161,15 @@ class MainLayout extends  Component{
                         onClick={event => this.handleListItemClick(event, 1)}
                     >
                     <ListItemIcon>
-                        <DraftsIcon />
+                        <DraftsIcon className={classes.icon}/>
                     </ListItemIcon>
                     <ListItemText 
                         classes={{ primary: classes.listItemText }}
                         primary="小组管理" />
                     </ListItem>
                 </List>
-                <div className={classes.pic}></div>
+            </div>
+            <img src={pic} className={classes.pic}alt=''></img>
             </div>
             <div className={classes.container}>
                 <Router>

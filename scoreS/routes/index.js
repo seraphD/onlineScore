@@ -5,7 +5,6 @@ var mime = require('mime');
 var db = require('./db/mysql');
 var router = express.Router();
 var start = 0;
-var XLSX = require('xlsx');
 var admin = 0;
 var reconnect = 0;
 
@@ -97,6 +96,10 @@ router.post('/dbtest', (req,res,next)=>{
   
 })
 
+router.post('/getLen', (req, res, next)=>{
+  res.json({length: data.length});
+})
+
 router.post('/init', (req, res, next)=> {
   for(let i=0; i < data.len; i++ ){
     data[i].login=0;
@@ -181,11 +184,10 @@ router.post('/next', (req, res, next)=>{
 })
 
 router.post('/score', (req, res, next)=>{
-  const {score, cur, log} = req.body;
+  const {score, cur} = req.body;
   var valid = isValid(score);
   confirm = 1;
   tempScore = valid.result;
-  tempLog = log;
 
   let temp = {
     id: cur, 

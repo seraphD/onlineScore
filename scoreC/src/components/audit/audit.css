@@ -34,8 +34,7 @@
 .audit-line {
     display: inline-block;
     height: 50px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 0 0 60px;
 }
 
 .audit-score {
@@ -48,6 +47,8 @@
     background-color: white;
     text-align: center;
     border-radius: 5px;
+    border: solid 1px;
+    border-color: #4caf50;
 }
 
 .audit-score:hover {

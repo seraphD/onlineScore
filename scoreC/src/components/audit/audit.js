@@ -2,12 +2,65 @@ import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import $ from 'jquery';
-import './audit.css';
 import config from '../../config.js';
 import io from 'socket.io-client';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import {withStyles} from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import './audit.css';
+
+const styles = theme =>({
+    main: {
+        width: 800,
+        height: 660,
+        display: 'inline-block',
+        margin: '60px 0 0 150px',
+    },
+    title: {
+        width: '90%',
+        height: 54,
+        padding: 15,
+        margin: '0 auto 0 auto',
+        backgroundColor: '#c51162',
+        position: 'relative',
+        top: -30,
+    },
+    mesT: {
+        color: 'white',
+        padding: '10px 0 0 0',
+    },
+    info: {
+        display: 'inline-block',
+        width: 385,
+        height: 423,
+        verticalAlign: 'top',
+        margin: '130px 0 0 100px',
+        textAlign: 'center'
+    },
+    wait: {
+        margin: '180px 0 0 0',
+    },
+    lines: {
+        margin: '80px 0 0 0',
+    },
+    line: {
+        margin: '15px 0 0 15px',
+    },
+    confirm: {
+        width: '400px',
+        margin: '25px 0 0 160px',
+    },
+    progress: {
+        display: 'inline-block',
+        verticalAlign: 'top',
+        margin: '0 0 0 530px',
+    },
+    github: {
+        margin: '50px 0 0 0',
+    }
+})
 
 class Audit extends Component{
     constructor(props){
@@ -20,6 +73,7 @@ class Audit extends Component{
             confirm : true,
             time: 300,
             timeLeft: 0,
+            cur: -1,
         }
     }
 
@@ -51,6 +105,13 @@ class Audit extends Component{
                         this.socket.emit('isContinue', {name});
                     }
                 })
+
+                axios.post(config.URL_S+'getLen')
+                .then(res => {
+                    this.setState({
+                        length: res.data.length,
+                    })
+                })
             })
         }
     }
@@ -63,6 +124,7 @@ class Audit extends Component{
         
         for(var i=60;i<=100;i+=10){
             var r = $('#'+l+'-'+i).hasClass('audit-score-selected');
+
             if( r === true && i !== parseInt(c) ){
                 $('#'+l+'-'+i).removeClass('audit-score-selected');
             }
@@ -78,11 +140,13 @@ class Audit extends Component{
 
         this.socket.on('startScore', (info)=>{
             let time = this.state.time;
+            let cur = this.state.cur;
 
             this.setState({
                 info: info,
                 confirm: false,
                 timeLeft: time,
+                cur: cur + 1,
             })
 
             $('.audit-score').removeClass('audit-score-selected');
@@ -143,9 +207,7 @@ class Audit extends Component{
     }
 
     componentWillUnmount(){
-        // let name = this.state.name;
-        // console.log(this.state);
-        // this.socket.emit('auditLogout',{name});
+        
     }
 
     confirm = () =>{
@@ -174,59 +236,73 @@ class Audit extends Component{
         )
     }
 
-    showInfo = () =>{
+    showInfo = (classes) =>{
         var info = this.state.info;
         if(JSON.stringify(info) === '{}'){
             return(
-                <div className='audit-wait'>等待打分开始...</div>
+                <div className={classes.wait}>等待打分开始...</div>
             )
         }else{
             return(
-                <div className='audit-mes'>
-                    <h1 className='audit-h1'>小组产品名：{info.title}</h1>
-                    <h2 className='audit-h1'>小组Github地址：<a href={info.github} target="blank">{info.github}</a></h2>
+                <div className={classes.wait}>
+                    <Typography variant="h4">{info.title}</Typography>
+                    <Typography variant="subtitle1" className={classes.github}><a href={info.github} target="blank">项目地址</a></Typography>
                 </div>
             )
         }
     }
 
     render(){
+        const {classes} = this.props
+
         return(
             <div>
-                <Paper elevation={1} className='audit-info'>
-                    {this.showInfo()}
-                </Paper>
-                <Paper elevation={1} className='audit-sheet'>
-                    <div className='audit-zone'>
-                    <div className='audit-gpname'>
-                        <h2>{this.state.name}</h2>
-                        <div className='audit-countDown'>{this.state.timeLeft}</div>
-                    </div>
-                    <div className='audit-main'>
-                        <div className='audit-label'>答辩</div>
-                        {this.renderline(1)}
-                        <div className='audit-label'>界面</div>
-                        {this.renderline(2)}
-                        <div className='audit-label'>功能</div>
-                        {this.renderline(3)}
-                        <div className='audit-label'>代码</div>
-                        {this.renderline(4)}
-                        <div className='audit-label'>团队</div>
-                        {this.renderline(5)}
-                        <Button variant="contained"  color="primary" className='audit-confirm' onClick={this.confirm} disabled={this.state.confirm}>
-                            确定
+                <Paper className={classes.main} elevation={1}>
+                    <Paper className={classes.title} elevation={5}>
+                        <Typography variant="h5" className={classes.mesT}>
+                            打分台
+                            {this.state.cur > -1?
+                                <div className={classes.progress}>
+                                {this.state.cur + 1}/{this.state.length}
+                                </div>:
+                                <div/>
+                            }
+                        </Typography>
+                        <div className={classes.lines}>
+                        <Typography variant="h5" className={classes.line}>答辩</Typography>
+                            {this.renderline(1)}
+                        <Typography variant="h5" className={classes.line}>界面</Typography>
+                            {this.renderline(2)}
+                        <Typography variant="h5" className={classes.line}>功能</Typography>
+                            {this.renderline(3)}
+                        <Typography variant="h5" className={classes.line}>代码</Typography>
+                            {this.renderline(4)}
+                        <Typography variant="h5" className={classes.line}>团队</Typography>
+                            {this.renderline(5)}
+                        </div>
+                        <Button className={classes.confirm} variant="contained" color="primary" disabled={this.state.confirm} onClick={this.confirm}>
+                            确认
                         </Button>
-                    </div>
-                    </div>
+                    </Paper>
+                </Paper>
+                <Paper className={classes.info} elevation={1}>
+                    <Typography variant="h5">
+                        {this.showInfo(classes)}
+                    </Typography>
                 </Paper>
             </div>
         )
     }
 }
 
+Audit.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
 function mapStateToProps(state){
     return{
       num: state.number,
+      length: state.length,
     }
 }
   
@@ -238,5 +314,5 @@ function mapDispatchToProps(dispatch){
     }
 }  
 
-export default connect(mapStateToProps,mapDispatchToProps)(Audit)
+export default connect(mapStateToProps,mapDispatchToProps)(withStyles(styles)(Audit))
 

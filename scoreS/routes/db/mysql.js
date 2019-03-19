@@ -20,7 +20,7 @@ exports.select = (field , table, filter, res) =>{
 		for(let i=0;i<field.length;i++){
 			let fi = field[i];
 
-			if(i<field.length-1){
+			if(i < field.length-1){
 				f += fi + ',';
 			}else f += fi;
 		}
@@ -28,12 +28,12 @@ exports.select = (field , table, filter, res) =>{
 
 	var fl = '';
 	if(JSON.stringify(filter) !== '{}'){
-		fl = "where";
+		fl = "where ";
 
 		for(var p in filter){
 			fl += p + "=" + filter[p] + "&&";
 		}
-		fl.substr(fl.length-2,2);
+		fl = fl.substr(0, fl.length-2);
 	}
 
 	let sql = `select ${f} from ${table} ${fl};`;
@@ -41,7 +41,6 @@ exports.select = (field , table, filter, res) =>{
 		if(err)throw err;
 		else{
 			res.json(results);
-			return results;
 		}
 	})
 }
@@ -72,6 +71,10 @@ exports.insert = (table,datas) =>{
 		})
 	}
 }
+
+/*
+	数据库更新函数
+*/ 
 
 exports.update = (table,field,filter) => {
 	let set = "";

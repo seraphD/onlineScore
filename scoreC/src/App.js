@@ -31,7 +31,7 @@ class App extends Component {
           .then(res =>{
             if(res.data.auth === 1){
               this.props.login('admin');
-              his.push('/watch');
+              his.push('/main');
             }else{
               alert('已有其他评委登录');
             }
