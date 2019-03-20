@@ -72,7 +72,7 @@ function toNames(names,numbers){
   }
 }
 
-router.post('/getAllName',async (req, res, next)=>{
+router.post('/getAllName', (req, res, next)=>{
   let data = [ 'WDM4','HMFY','UYL5','GHME','QY1W','NZHG','T2RA','3ASU','AKV4','LVOD','KTID','CZ1B','NLSE','Z1BU','SSQP','HH3P' ];
 
   res.send({data});

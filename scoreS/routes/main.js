@@ -22,7 +22,7 @@ router.post('/', function(req, res, next) {
     
 });
 
-router.post('/getGroup', async (req, res, next)=>{
+router.post('/getGroup', (req, res, next)=>{
     db.select(['title','number','github','grade'],'user',{},res);
 })
 
@@ -33,10 +33,10 @@ router.post('/addGroup', (req, res, next)=>{
     res.end();
 })
 
-router.post('/random',async (req, res, next)=>{
+router.post('/random', (req, res, next)=>{
     const {group} = req.body;
     let pre = group.slice();
-    await group.sort(randomSort);
+    group.sort(randomSort);
     let dis = [];
     
     for(let i=0;i<group.length;i++){
@@ -49,10 +49,10 @@ router.post('/random',async (req, res, next)=>{
     res.json({group,dis});
 })
 
-router.post('/getMember',async (req, res, next)=>{
+router.post('/getMember', (req, res, next)=>{
     const {id} = req.body;
 
-    await db.select(['name'], 'student', {group_id: id}, res);
+    db.select(['name'], 'student', {group_id: id}, res);
 })
 
 
