@@ -141,10 +141,11 @@ router.post('/start', (req, res, next)=>{
 router.post('/adminLogin',(req, res, next)=>{
   var auth = 0;
 
-  if(admin === 0){
-    auth = 1;
-    admin = 1;
-  }
+  // if(admin === 0){
+  //   auth = 1;
+  //   admin = 1;
+  // }
+  auth = 1;
 
   res.json({auth});
 })

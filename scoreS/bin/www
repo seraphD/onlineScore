@@ -21,6 +21,9 @@ function avg(array){
 }
 
 var allclients = [];
+var names = [];
+var offLine = [];
+
 io.on('connection', function(socket){
   if(allclients.indexOf(socket) === -1){
     allclients.push(socket);
@@ -31,6 +34,7 @@ io.on('connection', function(socket){
   })
 
   socket.on('loginOver', function(gpName){
+    names.push(gpName);
     socket.broadcast.emit('newAudit',gpName);
   })
 
@@ -62,11 +66,13 @@ io.on('connection', function(socket){
 
   socket.on('disconnect', function(){
     var i = allclients.indexOf(socket);
-    console.log("disconnect at "+ i);
+    var name = offLine[i+1];
+    offLine[name] = i+1;
+    allclients[i] = null;
 
-    allclients.splice(i, 1);
+    allclients.splice(i,1);
     if(i>0){
-      socket.broadcast.emit('auditDis',{index: i});
+      socket.broadcast.emit('auditDis', {index: i});
     }
   })
 })

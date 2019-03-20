@@ -25,7 +25,7 @@ function empty(){
 }
 
 function full(){
-    if(this.dataStore.length === 5) return true;
+    if(this.dataStore.length === 6) return true;
     else return false;
 }
 

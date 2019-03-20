@@ -59,6 +59,9 @@ const styles = theme =>({
     },
     github: {
         margin: '50px 0 0 0',
+    },
+    grade: {
+        margin: '160px 0 0 0',
     }
 })
 
@@ -147,22 +150,23 @@ class Audit extends Component{
                 confirm: false,
                 timeLeft: time,
                 cur: cur + 1,
+                score: [0,0,0,0,0,0],
             })
 
             $('.audit-score').removeClass('audit-score-selected');
             
-            this.timer = setInterval(() => {
-                let tl = this.state.timeLeft;
-                tl -= 1;
+            // this.timer = setInterval(() => {
+            //     let tl = this.state.timeLeft;
+            //     tl -= 1;
 
-                if(tl >= 0){
-                    this.setState({
-                        timeLeft: tl
-                    })
-                }else{
-                    this.confirm();
-                }
-            }, 1000);
+            //     if(tl >= 0){
+            //         this.setState({
+            //             timeLeft: tl
+            //         })
+            //     }else{
+            //         this.confirm();
+            //     }
+            // }, 1000);
         })
 
         this.socket.on('auditInit',()=>{
@@ -181,8 +185,9 @@ class Audit extends Component{
 
         this.socket.on('ansIsContinue', (o)=>{
             const {ans,name} = o;
+            console.log(name + " " + this.state.name);
 
-            if(name === this.state.name && ans === 1){
+            if(name === this.state.name && ans === true){
                 let time = 120;
 
                 this.setState({
@@ -244,9 +249,9 @@ class Audit extends Component{
             )
         }else{
             return(
-                <div className={classes.wait}>
+                <div className={classes.grade}>
                     <Typography variant="h4">{info.title}</Typography>
-                    <Typography variant="subtitle1" className={classes.github}><a href={info.github} target="blank">项目地址</a></Typography>
+                    <Typography variant="h6" className={classes.github}><a href={info.github} target="blank">项目地址</a></Typography>
                 </div>
             )
         }

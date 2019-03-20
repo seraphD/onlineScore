@@ -15,6 +15,7 @@ const styles = theme =>({
     main: {
         width: 1216,
         height: 'auto',
+        minHeight: '650px',
         display: 'inline-block',
         verticalAlign: 'top',
         margin: '80px auto 0 15px',
@@ -93,7 +94,7 @@ const styles = theme =>({
         color: 'white',
     },
     Snackbars: {
-        margin: '50px 0 50px 20px',
+        margin: '40px 0 40px 20px',
     },
     subtitle: {
         color: 'white',
@@ -120,9 +121,8 @@ const styles = theme =>({
         fontSize: '1.5em',
         margin: '115px 0 0 40px',
     },
-    table: {
-        width: '80%',
-        margin: '0 auto 0 auto',
+    grade: {
+        margin: '0 15px 0 250px',
     }
 })
 
@@ -225,6 +225,7 @@ class Load extends Component{
                                 this.setState({
                                     count: 0,
                                     cur: cur + 1,
+                                    finalScore: 0,
                                 })
                                 this.socket.emit('score',{title: group.title, github: group.github});
                             }, 5000);
@@ -239,6 +240,43 @@ class Load extends Component{
                 }
             }
         })
+
+        this.socket.on('auditDis', (o)=>{
+            const {index} = o;
+            let name = this.props.audits[index-1];
+
+            let message = {
+                type: 4,
+                name
+            }
+
+            this.enqueue(message);
+            this.setState({});
+        })
+
+        this.socket.on('newAudit', (o)=>{
+            const gpname = o;
+
+            let index = -1;
+            for(let i=0;i<this.props.audits.length;i++){
+                let temp = this.props.audits[i].name;
+
+                if(gpname === temp){
+                    index = i;
+                    break;
+                }
+            }
+
+            if(index !== 1){
+                let mes = {
+                    type: 5,
+                    name: gpname
+                }
+
+                this.enqueue(mes);
+                this.setState({});
+            }
+        })
     }
     
     handleClose = () =>{
@@ -247,7 +285,7 @@ class Load extends Component{
         })
     }
 
-    getMember =async () =>{
+    getMember = () =>{
         let cur = this.state.cur;
         let id = cur + 1;
 
@@ -271,6 +309,8 @@ class Load extends Component{
         this.setState({
             pause: !p
         })
+
+        this.socket.emit('stopScore');
     }
 
     render(){
@@ -298,10 +338,16 @@ class Load extends Component{
                                 </Typography>
                             </Paper>
                         </div>
-                        <Typography className={classes.progressTitle}>打分进度</Typography>
+                        <Typography className={classes.mesTitle}>打分进度</Typography>
                         <div className={classes.Snackbars}>
                             <Typography className={classes.progress} variant="h4">
                                 {this.state.count}/{this.props.audits.length}&nbsp;名评委完成了打分  
+                            </Typography>
+                        </div>
+                        <Typography className={classes.mesTitle}>最终成绩</Typography>
+                        <div className={classes.grade}>
+                            <Typography variant="h1" style={{color: '#dd2c00'}}>
+                                {this.state.finalScore}
                             </Typography>
                         </div>
                     </div>
@@ -311,21 +357,6 @@ class Load extends Component{
                         <Button variant="contained" color="secondary" className={classes.stopBtn} onClick={this.pause}>停止打分</Button>}
                         </Typography>
                         <div className={classes.Snackbars}>
-                            {/* <Paper elevation={5} className={classes.notice}>
-                                评委&nbsp;test1&nbsp;为小组1的打分为100。
-                            </Paper>
-                            <Paper elevation={5} className={classes.warn}>
-                                评委&nbsp;test1&nbsp;离开了系统。
-                            </Paper>
-                            <Paper elevation={5} className={classes.reconnect}>
-                                评委&nbsp;test1&nbsp;重新进入了系统。
-                            </Paper>
-                            <Paper elevation={5} className={classes.finish}>
-                                小组&nbsp;test1&nbsp;打分已经结束。5秒后进入下一组打分。
-                            </Paper>
-                            <Paper elevation={5} className={classes.over}>
-                                本次打分已经结束
-                            </Paper> */}
                             {queue.reverse().map((o,i) => {
                                 switch(o.type){
                                     case 1: return(
@@ -335,7 +366,7 @@ class Load extends Component{
                                     )
                                     case 2: return(
                                         <Paper elevation={5} className={classes.finish} key={i}>
-                                            小组&nbsp;{o.group}&nbsp;打分已经结束。5秒后进入下一组打分。
+                                            小组&nbsp;{o.group+1}&nbsp;打分已经结束。5秒后进入下一组打分。
                                         </Paper>
                                     )
                                     case 3: return(
@@ -343,9 +374,19 @@ class Load extends Component{
                                             本次打分已经结束
                                         </Paper>
                                     )
+                                    case 4: return(
+                                        <Paper elevation={5} className={classes.warn} key={i}>
+                                            评委&nbsp;{o.name}&nbsp;离开了系统。
+                                        </Paper>
+                                    )
+                                    case 5: return(
+                                        <Paper elevation={5} className={classes.reconnect} key={i}>
+                                            评委&nbsp;{o.name}&nbsp;重新进入了系统。
+                                        </Paper>
+                                    )
                                     default: return(
                                         <Paper elevation={5} className={classes.notice} key={i}>
-                                            test
+                                            未知信息
                                         </Paper>
                                     )
                                 }

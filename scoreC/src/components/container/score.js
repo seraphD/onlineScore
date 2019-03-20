@@ -48,6 +48,10 @@ const styles = theme =>({
     sectionDesktop: {
         width: 150,
         marginLeft: '87.5%',
+    },
+    loginProgress: {
+        margin: '50px 0 0 0',
+        textAlign: 'center',
     }
 })
 
@@ -59,6 +63,9 @@ class Score extends Component{
         this.state = {
             cur: -1, 
             dis: [],
+            count: 0,
+            start: false,
+            login: false,
         }
     }
 
@@ -74,9 +81,27 @@ class Score extends Component{
         // }
     }
 
+    find = (name) =>{
+        let audits = this.audits;
+        for(let i=0;i<audits.length;i++){
+            if(audits.name === name){
+                return true
+            }
+        }
+        return false;
+    }
+
     componentDidMount(){
         this.socket.on('newAudit', (o)=>{
-            this.audits.push(o);
+            const {gpname} = o;
+            if(!this.find(gpname)){
+                this.audits.push(o);
+
+                let c = this.state.count;
+                this.setState({
+                    count: c+1,
+                })
+            }
         })
     }
 
@@ -96,6 +121,11 @@ class Score extends Component{
 
     startLogin = () =>{
         axios.post(config.URL_S+'init');
+        let {start, login} = this.state;
+        this.setState({
+            start: !start,
+            login: !login,
+        })
     }
 
     render(){
@@ -129,12 +159,17 @@ class Score extends Component{
                     评委可以随时结束本次评分，评分结束后会先显示图表，点击右上角图标可以下载xls数据表。
                 </Typography>
                 <div className={classes.btnContainer}>
-                <Button variant="contained" color="primary" className={classes.start} onClick={this.startLogin}>
+                <Button variant="contained" color="primary" className={classes.start} onClick={this.startLogin} disabled={this.state.login}>
                     开启登录
                 </Button>
-                <Button variant="contained" color="primary" className={classes.start} onClick={this.start}>
+                <Button variant="contained" color="secondary" className={classes.start} onClick={this.start} disabled={!this.state.start}>
                     开始
                 </Button>
+                </div>
+                <div className={classes.loginProgress}>
+                    <Typography variant="h4">
+                        {this.state.count}/{this.props.group.length}名评委登录了系统
+                    </Typography>
                 </div>
             </div>
         )

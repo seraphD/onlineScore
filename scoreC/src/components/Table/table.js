@@ -13,10 +13,25 @@ import TableRow from '@material-ui/core/TableRow';
 const styles = theme => ({
     table: {
         width: '90%',
-        margin: '0 auto 0 auto',
+        margin: '55px auto 0 auto',
+    },
+    body: {
+        fontSize: '1em',
     },
     root: {
         overflowY: 'auto',
+    },
+    login: {
+        width: '80px',
+        height: '20px',
+        display: 'inline-block',
+        backgroundColor: '#4caf50',
+    },
+    logout: {
+        width: '80px',
+        height: '20px',
+        display: 'inline-block',
+        backgroundColor: '#dd2c00',
     }
 })
 
@@ -24,9 +39,6 @@ const CustomTableCell = withStyles(theme => ({
     head: {
         fontSize: '1em',
         color: 'black',
-    },
-    body: {
-
     },
   }))(TableCell);
 
@@ -43,14 +55,14 @@ class DetailTable extends Component{
         let tableData = [];
 
         audits.map((name,i) => {
-            tableData.push(this.createData(name,0,0,0,0,0,0));
+            tableData.push(this.createData(name,0,0,0,0,0,0,false,true));
             return 1;
         })
         this.setState({tableData});
     }
 
-    createData = (name, reply, ui, func, team, code, sum) =>{
-        return {name, reply, ui, func, team, code, sum}
+    createData = (name, reply, ui, func, team, code, sum, confirm, online) =>{
+        return {name, reply, ui, func, team, code, sum, confirm, online}
     }
 
     find = (name) => {
@@ -84,11 +96,45 @@ class DetailTable extends Component{
                 temp[index].team = score[4];
                 temp[index].code = score[5];
                 temp[index].sum = avg;
+                temp[index].confirm = true;
 
                 this.setState({
                     tableData: temp,
                 })
             }
+        })
+
+        socket.on('auditDis', (o)=>{
+            let {index} = o;
+            
+            let temp = this.state.tableData;
+            if(index > 0){
+                temp[index-1].online = false;
+            }
+
+            this.setState({
+                tableData: temp,
+            })
+        })
+
+        socket.on('newAudit', (o)=>{
+            let index = this.find(o);
+
+            if(index !== -1){
+                let temp = this.state.tableData;
+                temp[index].online = true;
+
+                this.setState({
+                    tableData: temp,
+                })
+            }
+        })
+
+        socket.on('askContinue', (name)=>{
+            let index = this.find(name);
+            let ans = this.state.tableData[index].confirm;
+
+            socket.emit('ansContinue', {name,ans});
         })
     }
 
@@ -107,6 +153,7 @@ class DetailTable extends Component{
                     <CustomTableCell>团队</CustomTableCell>
                     <CustomTableCell>代码</CustomTableCell>
                     <CustomTableCell align="right">总分</CustomTableCell>
+                    <CustomTableCell align="center">在线</CustomTableCell>
                 </TableRow>
                 </TableHead>
                 <TableBody>
@@ -122,6 +169,11 @@ class DetailTable extends Component{
                                 <TableCell>{row.team}</TableCell>
                                 <TableCell>{row.code}</TableCell>
                                 <TableCell align="right">{row.sum}</TableCell>
+                                <TableCell align="left">
+                                    {row.online? 
+                                        <div className={classes.login}/>:
+                                        <div className={classes.logout}/>}
+                                </TableCell>
                             </TableRow>
                         )
                     })}
