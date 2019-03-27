@@ -15,6 +15,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import InboxIcon from '@material-ui/icons/Inbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import pic from '../pic/backPic_2.jpg';
+import Finish from './finish/finish';
 
 const styles = theme =>({
     root:{
@@ -50,9 +51,9 @@ const styles = theme =>({
     },
     listItem: {
         width: '90%',
-
         marginLeft: 'auto',
         marginRight: 'auto',
+        marginTop: 10,
         "&$selected, &$selected:hover, &$selected:focus": {
             backgroundColor: "#42a5f5",
             borderRadius: '5px',
@@ -75,9 +76,10 @@ const styles = theme =>({
     },
 })
 
-const Container=withRouter((props)=>{
+const Container = withRouter((props)=>{
 	return(
 		<Switch>
+            <Route path="/main/finish" component={Finish}/>
             <Route path='/main/load' component={Load}/>
             <Route path='/main/group' component={Group}/>
             <Route path='/main' component={Score}/>
@@ -85,11 +87,11 @@ const Container=withRouter((props)=>{
 		);
 })
 
-class MainLayout extends  Component{
+class MainLayout extends Component{
     constructor(props){
         super(props);
         this.state = {
-            selectedIndex: -1,
+            selectedIndex: 0,
         }
     }
 
@@ -104,25 +106,19 @@ class MainLayout extends  Component{
         if(index === 1){
             his.push('/main/group');
         }else his.push('/main');
-
-        // axios.post(config.URL_S+'main/getGroup')
-        // .then(res =>{
-        //     let data = res.data;
-        //     this.props.getGroup(data);
-
-        //     if(index === 1){
-        //         his.push('/main/group');
-        //     }else{
-        //         his.push('/main');
-        //     }
-        // })
     };
 
     componentWillMount(){
         axios.post(config.URL_S+'main/getGroup')
         .then(res =>{
             let data = res.data;
-            this.props.getGroup(data);
+            // this.props.getGroup(data);
+
+            axios.post(config.URL_S+'main/random', {group: data})
+            .then(res => {
+                let data = res.data.group;
+                this.props.getGroup(data);
+            })
         })
     }
 
@@ -169,7 +165,7 @@ class MainLayout extends  Component{
                     </ListItem>
                 </List>
             </div>
-            <img src={pic} className={classes.pic}alt=''></img>
+            <img src={pic} className={classes.pic} alt=''></img>
             </div>
             <div className={classes.container}>
                 <Router>

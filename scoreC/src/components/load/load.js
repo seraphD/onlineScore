@@ -48,7 +48,7 @@ const styles = theme =>({
     },
     message: {
         width: '50%',
-        height: '80%',
+        height: 490,
         textAlign: 'left',
         display: 'inline-block',
         verticalAlign: 'top',
@@ -142,6 +142,9 @@ class Load extends Component{
             finalScore: 0,
         }
     }
+    static contextTypes ={
+        router:PropTypes.object,
+    }
 
     start = () =>{
         let start = this.state.start;
@@ -216,7 +219,10 @@ class Load extends Component{
                         }
 
                         this.enqueue(mes);
-                        this.setState({finalScore});
+                        this.record = [];
+                        this.setState({
+                            finalScore: parseInt(finalScore)
+                        });
 
                         let group = this.props.group[cur+1];
 
@@ -227,7 +233,7 @@ class Load extends Component{
                                     cur: cur + 1,
                                     finalScore: 0,
                                 })
-                                this.socket.emit('score',{title: group.title, github: group.github});
+                                this.socket.emit('score',{title: group.title, github: group.github, number: group.number});
                             }, 5000);
                         }else{
                             let mes = {
@@ -310,6 +316,8 @@ class Load extends Component{
             pause: !p
         })
 
+        let his = this.context.router.history;
+        his.push("/main/finish");
         this.socket.emit('stopScore');
     }
 
@@ -386,7 +394,7 @@ class Load extends Component{
                                     )
                                     default: return(
                                         <Paper elevation={5} className={classes.notice} key={i}>
-                                            未知信息
+                                            未知异常信息
                                         </Paper>
                                     )
                                 }

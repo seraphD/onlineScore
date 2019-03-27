@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var db = require('./db/mysql');
 
+var random = [];
+
 function randomSort(a,b){
     return Math.random() > 0.5 ? -1: 1;
 }
@@ -34,19 +36,16 @@ router.post('/addGroup', (req, res, next)=>{
 })
 
 router.post('/random', (req, res, next)=>{
-    const {group} = req.body;
-    let pre = group.slice();
-    group.sort(randomSort);
-    let dis = [];
-    
-    for(let i=0;i<group.length;i++){
-        let g = pre[i];
-        let index = group.indexOf(g);
-        
-        dis.push(index - i);
-    }
+    if(random.length === 0){
+        const {group} = req.body;
+        let pre = group.slice();
+        group.sort(randomSort);
+        random = group.slice();
 
-    res.json({group,dis});
+        res.json({group});
+    }else{
+        res.json({group: random});
+    }
 })
 
 router.post('/getMember', (req, res, next)=>{

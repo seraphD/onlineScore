@@ -10,7 +10,15 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import IconButton from '@material-ui/core/IconButton';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import io from 'socket.io-client';
+import $ from 'jquery';
 
 const styles = theme =>({
     root: {
@@ -52,6 +60,14 @@ const styles = theme =>({
     loginProgress: {
         margin: '50px 0 0 0',
         textAlign: 'center',
+        width: '360px',
+    },
+    rate: {
+        margin: '30px 0 0 0',
+    },
+    input: {
+        opacity: 0,
+        width: 0,
     }
 })
 
@@ -66,19 +82,16 @@ class Score extends Component{
             count: 0,
             start: false,
             login: false,
+            open: false,
+            imported: false,
+            hightScoreRate: 0,
+            lowScoreRate: 0,
+            success: false,
         }
     }
 
     componentWillMount(){
-        // let group = this.props.group;
-
-        // if(group.length === 0){
-        //     axios.post(config.URL_S+'main/getGroup')
-        //     .then(res =>{
-        //         let data = res.data;
-        //         this.props.getGroup(data);
-        //     })
-        // }
+        
     }
 
     find = (name) =>{
@@ -93,7 +106,7 @@ class Score extends Component{
 
     componentDidMount(){
         this.socket.on('newAudit', (o)=>{
-            const {gpname} = o;
+            const gpname = o;
             if(!this.find(gpname)){
                 this.audits.push(o);
 
@@ -115,7 +128,8 @@ class Score extends Component{
         let group = this.props.group;
 
         this.props.setAudits(audits);
-        this.socket.emit('score',{title: group[0].title,github: group[0].github});
+        this.socket.emit('score',{title: group[0].title, github: group[0].github, number: group[0].number});
+        //this.socket.emit('watch');
         his.push('/main/load');
     }
 
@@ -125,7 +139,66 @@ class Score extends Component{
         this.setState({
             start: !start,
             login: !login,
+            open: true,
         })
+    }
+
+    handleOpen = () =>{
+        this.setState({
+            open: true,
+        })
+    }
+
+    handleClose = () =>{
+        this.setState({
+            open: false,
+            success: false,
+        })
+    }
+
+    handleChange = prop => event =>{
+        this.setState({ [prop]: event.target.value});
+    }
+
+    setRate = () =>{
+        let {hightScoreRate, lowScoreRate} = this.state;
+
+        axios.post(config.URL_S+'setRate', {hightScoreRate, lowScoreRate});
+        this.setState({
+            open: false,
+        })
+    }
+
+    ImportFile = (classes) =>{
+        let fileReader;
+
+        const handleFileRead = (e) =>{
+            const content = fileReader.result;
+            console.log(content);
+            this.setState({imported: true, success: true});
+        }
+
+        const handleFileChosen = (file) =>{
+            fileReader = new FileReader();
+            fileReader.onloadend = handleFileRead;
+            fileReader.readAsText(file);
+        }
+
+        const click = () =>{
+            $('#input').click()
+        }
+    
+        return(
+            <Button variant="contained" color="primary" className={classes.button} onClick={click}>
+                <input type='file' 
+                    accept='.json' 
+                    className={classes.input}
+                    id='input' 
+                    onChange={e => handleFileChosen(e.target.files[0])}
+                />
+                导入数据
+            </Button>
+        )
     }
 
     render(){
@@ -159,18 +232,66 @@ class Score extends Component{
                     评委可以随时结束本次评分，评分结束后会先显示图表，点击右上角图标可以下载xls数据表。
                 </Typography>
                 <div className={classes.btnContainer}>
-                <Button variant="contained" color="primary" className={classes.start} onClick={this.startLogin} disabled={this.state.login}>
-                    开启登录
-                </Button>
-                <Button variant="contained" color="secondary" className={classes.start} onClick={this.start} disabled={!this.state.start}>
-                    开始
-                </Button>
+                    {this.state.imported?
+                    <div>
+                    <Button variant="contained" color="primary" className={classes.start} onClick={this.startLogin} disabled={this.state.login}>
+                        开启登录
+                    </Button>
+                    <Button variant="contained" color="secondary" className={classes.start} onClick={this.start} disabled={!this.state.start}>
+                        开始
+                    </Button>
+                    <div className={classes.loginProgress}>
+                        <Typography variant="h4">
+                            {this.state.count}/{this.props.group.length}名评委登录了系统
+                        </Typography>
+                    </div>
+                    </div>:this.ImportFile(classes)
+                    }
                 </div>
-                <div className={classes.loginProgress}>
-                    <Typography variant="h4">
-                        {this.state.count}/{this.props.group.length}名评委登录了系统
-                    </Typography>
-                </div>
+                <Dialog
+                    open={this.state.open}
+                    onClose={this.handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"设置分数配比"}</DialogTitle>
+                    <DialogContent>
+                    <FormControl>
+                        <Input
+                            id="adornment-weight"
+                            value={this.state.highRate}
+                            onChange={this.handleChange('hightScoreRate')}
+                            aria-describedby="weight-helper-text"
+                            placeholder={"优秀率"}
+                            endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                            inputProps={{
+                                'aria-label': 'hight',
+                            }}
+                            className={classes.rate}
+                        />
+                        <Input
+                            id="adornment-weight"
+                            value={this.state.highRate}
+                            onChange={this.handleChange('lowScoreRate')}
+                            aria-describedby="weight-helper-text"
+                            placeholder={"及格率"}
+                            endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                            inputProps={{
+                                'aria-label': 'low',
+                            }}
+                            className={classes.rate}
+                        />
+                    </FormControl>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.setRate} color="primary">
+                            确定
+                        </Button>
+                        <Button onClick={this.handleClose} color="primary">
+                            取消
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         )
     }
@@ -191,7 +312,7 @@ function mapDispatchToProps(dispatch){
         dispatch({type:'SET_AUDITS',data})
       },
       setData(data){
-          dispatch({type:'SET_DATA',data});
+        dispatch({type:'SET_DATA',data});
       }
     }
 }

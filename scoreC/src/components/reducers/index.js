@@ -3,6 +3,7 @@ const initialState={
 	authenticated:false,
 	group: [],
 	audits: [],
+	random: [],
 }
 
 const appReducer = (state=initialState, action)=>{
@@ -19,6 +20,9 @@ const appReducer = (state=initialState, action)=>{
 		}
 		case 'SET_DATA': {
 			return {...state, data: action.data};
+		}
+		case 'SET_RANDOM_GROUP': {
+			return {...state, random: action.data};
 		}
 		default: {
 			return {...state}
