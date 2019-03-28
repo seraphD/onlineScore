@@ -275,7 +275,9 @@ class Audit extends Component{
             if(highLeft > 0){
                 this.setState({
                     highLeft: highLeft-1,
+                    confirm: true,
                 })
+                return;
             }else{
                 alert("你不能打这个分数!");
             }
@@ -286,14 +288,13 @@ class Audit extends Component{
             if(lowleft > 0){
                 this.setState({
                     lowleft: lowleft-1,
+                    confirm: true,
                 })
+                return;
             }else{
                 alert("你不能打这个分数!");
             }
         }
-        this.setState({
-            confirm: true,
-        })
         clearInterval(this.timer);
 
         const score = this.state.score;
