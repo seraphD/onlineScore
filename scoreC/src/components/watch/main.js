@@ -112,7 +112,6 @@ class MainLayout extends Component{
         axios.post(config.URL_S+'main/getGroup')
         .then(res =>{
             let data = res.data;
-            // this.props.getGroup(data);
 
             axios.post(config.URL_S+'main/random', {group: data})
             .then(res => {

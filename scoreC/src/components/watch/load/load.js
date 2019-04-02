@@ -147,39 +147,8 @@ class Load extends Component{
         router:PropTypes.object,
     }
 
-    start = () =>{
-        let start = this.state.start;
-
-        this.setState({
-            start: !start,
-            cur: 0,
-        });
-    }
-
-    next = () =>{
-        let cur = this.state.cur;
-        let length = this.props.group.length;
-
-        if(cur < length-1){
-            this.setState({
-                cur: cur+1
-            })
-        }else{
-            alert('已经是最后一个了！！');
-        }
-    }
-
     componentWillMount(){
-        let group = this.props.group;
-        let numbers = [];
-
-        if(group !== undefined){
-            for(let i=0;i<group.length;i++){
-                numbers.push(group[i].number);
-            }
-        }else{
-            
-        }
+        
     }
 
     enqueue = (message) => {
@@ -289,25 +258,6 @@ class Load extends Component{
     handleClose = () =>{
         this.setState({
             open: false,
-        })
-    }
-
-    getMember = () =>{
-        let cur = this.state.cur;
-        let id = cur + 1;
-
-        axios.post(config.URL_S + "main/getMember",{id})
-        .then(res => {
-            const data = res.data;
-            let names = [];
-
-            for(let i of data){
-                names.push(i.name);
-            }
-
-            this.setState({
-                name: names.join(' | '),
-            })
         })
     }
 

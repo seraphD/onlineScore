@@ -122,20 +122,6 @@ class Audit extends Component{
                 })
                 this.socket.emit('loginOver', res.data.name);
 
-                // axios.post(config.URL_S+'curData')
-                // .then(res =>{
-                //     let {cur,curData} = res.data;
-
-                //     if(cur > -1){
-                //         this.setState({
-                //             info: curData
-                //         })
-
-                //         const name = this.state.name;
-                //         this.socket.emit('isContinue', {name});
-                //     }
-                // })
-
                 axios.post(config.URL_S+'getRate')
                 .then(res =>{
                     const {high, low, length} = res.data;
@@ -176,6 +162,7 @@ class Audit extends Component{
         this.socket.on('startScore', (info)=>{
             let {time, cur} = this.state;
             let num = info.number;
+            let github = info.github;
 
             if(this.props.num !== num){
                 this.setState({
@@ -186,6 +173,7 @@ class Audit extends Component{
                     score: [0,0,0,0,0,0],
                     start: true,
                     ave: 0,
+                    github,
                 })
             }else{
                 this.setState({
@@ -225,19 +213,6 @@ class Audit extends Component{
                     confirm: false,
                     timeLeft: time
                 })
-
-                // this.timer = setInterval(() => {
-                //     let tl = this.state.timeLeft;
-                //     tl -= 1;
-    
-                //     if(tl >= 0){
-                //         this.setState({
-                //             timeLeft: tl
-                //         })
-                //     }else{
-                //         this.confirm();
-                //     }
-                // }, 1000);
             }
         })
     }
@@ -260,11 +235,10 @@ class Audit extends Component{
             if(highLeft > 0){
                 this.setState({
                     highLeft: highLeft-1,
-                    confirm: true,
                 })
-                return;
             }else{
                 alert("你不能打这个分数!");
+                return;
             }
         }
 
@@ -273,11 +247,10 @@ class Audit extends Component{
             if(lowleft > 0){
                 this.setState({
                     lowleft: lowleft-1,
-                    confirm: true,
                 })
-                return;
             }else{
                 alert("你不能打这个分数!");
+                return;
             }
         }
         clearInterval(this.timer);
@@ -319,7 +292,7 @@ class Audit extends Component{
         }else{
             return(
                 <div className={classes.wait}>
-                    <Typography variant="h4">{info.title}</Typography>
+                   <Typography variant="h4"><a target="_blank" href={this.state.github}>{info.title}</a></Typography>
                 </div>
             )
         }
