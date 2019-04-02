@@ -7,8 +7,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-// import axios from 'axios';
-// import config from '../../config';
 
 const styles = theme => ({
     table: {
@@ -84,7 +82,7 @@ class DetailTable extends Component{
         let {socket} = this.props;
         
         socket.on('showScore', (result)=>{
-            let {name, score, avg} = result;
+            let {name, score, ave} = result;
             let index = this.find(name);
 
             if(index !== -1){
@@ -95,7 +93,7 @@ class DetailTable extends Component{
                 temp[index].func = score[3];
                 temp[index].team = score[4];
                 temp[index].code = score[5];
-                temp[index].sum = avg;
+                temp[index].sum = ave;
                 temp[index].confirm = true;
 
                 this.setState({

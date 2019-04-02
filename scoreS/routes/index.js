@@ -1,8 +1,4 @@
 var express = require('express');
-var fs = require('fs');
-var path = require('path');
-var mime = require('mime');
-var db = require('./db/mysql');
 var router = express.Router();
 var start = 0;
 var admin = 0;
@@ -25,15 +21,11 @@ var data = [
   {"id":"13","member":"吴佳琪、陈贵婷、王秸 ","title":"照片编辑器","github":"https://github.com/Fionakiki/Myproject","mobile":"15355467622","login":"0","grade":"0"},
   {"id":"15","member":"陈俊卿、齐聪聪 ","title":" 淘宝","github":"https://github.com/xylkh/web_project  ","mobile":"18989849378","login":"0","grade":"0"},
   {"id":"16","member":"李博乐、孔昊东 ","title":" 影视推荐","github":"https://github.com/eliotkong/web_movie_hznu","mobile":"15990184818","login":"0","grade":"0"}
-  ]
+]
 
 var record = [];
 var connect = [];
-var cur = -1;
 var finish = 1;
-var confirm = 0;
-var tempLog = [];
-var tempScore = 0;
 var rateHigh = 0;
 var rateLow = 0;
 
@@ -124,18 +116,6 @@ function deviation(arr){
   return sum / arr.length;
 }
 
-router.get('/', (req, res, next)=> {
-  
-});
-
-router.post('/dbtest', (req,res,next)=>{
-  
-})
-
-router.post('/getLen', (req, res, next)=>{
-  res.json({length: data.length});
-})
-
 router.post('/init', (req, res, next)=> {
   for(let i=0; i < data.len; i++ ){
     data[i].login=0;
@@ -145,51 +125,16 @@ router.post('/init', (req, res, next)=> {
     connect = [];
   }
 
-  // start = 1;
   finish = 0;
   record = [];
   cur = -1;
   res.end();
 });
 
-router.post('/getData', (req, res, next)=> {
-  res.json({data,finish});
-})
-
-router.post('/curData', (req, res, next)=>{
-  if(cur > -1){
-    let curData = data[cur];
-    res.json({cur,curData});
-  }else{
-    res.json({cur});
-  }
-})
-
-router.post('/start', (req, res, next)=>{
-  const {log} = req.body;
-
-  tempLog = log;
-  reconnect = 1;
-  cur += 1;
-  res.end();
-})
-
-router.post('/adminLogin',(req, res, next)=>{
+router.post('/adminLogin', (req, res)=>{
   var auth = 0;
-
-  // if(admin === 0){
-  //   auth = 1;
-  //   admin = 1;
-  // }
   auth = 1;
-
   res.json({auth});
-})
-
-router.post('/adminLogout',(req, res, next)=>{
-  admin = 0;
-  start = 0;
-  res.end();
 })
 
 router.post('/login', (req, res) => {
@@ -209,15 +154,6 @@ router.post('/login', (req, res) => {
   }
 
   res.json({auth});
-})
-
-router.post('/next', (req, res, next)=>{
-  const {log} = req.body;
-
-  tempLog = log;
-  cur += 1;
-  confirm = 0;
-  res.end();
 })
 
 router.post('/score', (req, res, next)=>{
@@ -271,15 +207,12 @@ router.post('/finish', (req, res, next)=>{
   res.json({record, catagory, grade, highRate, wellRate, middleRate, passRate});
 })
 
-router.post('/reStart', (req, res, next)=>{
-  res.json({cur, confirm, tempLog, tempScore});
-})
-
 router.post('/setRate', (req, res, next)=>{
   const {hightScoreRate, lowScoreRate} = req.body;
   rateHigh = hightScoreRate;
   rateLow = lowScoreRate;
   start = 1;
+  
   res.end();
 })
 

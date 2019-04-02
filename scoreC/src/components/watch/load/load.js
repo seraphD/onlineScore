@@ -4,12 +4,12 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
-import config from '../../config';
+import config from '../../../config';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Table from '../Table/table';
+import Table from '../table/table';
 import io from 'socket.io-client';
-import queue from '../Queue/queue';
+import queue from '../queue/queue.js';
 
 const styles = theme =>({
     main: {
@@ -142,6 +142,7 @@ class Load extends Component{
             finalScore: 0,
         }
     }
+
     static contextTypes ={
         router:PropTypes.object,
     }
@@ -198,7 +199,7 @@ class Load extends Component{
                 let message = {
                     type: 1,
                     name: result.name,
-                    score: result.avg,
+                    score: result.ave,
                 }
                 let c = this.state.count + 1;
                 let cur = this.state.cur;

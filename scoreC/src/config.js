@@ -1,5 +1,5 @@
 module.exports={
 	port:4000,
-	host:"47.100.45.240",
-	URL_S:'http://47.100.45.240:4000/',
+	host:"localhost",
+	URL_S:'http://localhost:4000/',
 };

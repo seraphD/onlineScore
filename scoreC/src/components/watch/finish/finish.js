@@ -4,7 +4,7 @@ import axios from 'axios';
 import {withStyles} from '@material-ui/core/styles';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import config from '../../config';
+import config from '../../../config';
 import configLine from './charts/lineConfig';
 import configPie from './charts/pieCharts';
 import ReactHighcharts from 'react-highcharts';

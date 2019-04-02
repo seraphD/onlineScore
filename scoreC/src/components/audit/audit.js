@@ -217,7 +217,6 @@ class Audit extends Component{
 
         this.socket.on('ansIsContinue', (o)=>{
             const {ans,name} = o;
-            console.log(name + " " + this.state.name);
 
             if(name === this.state.name && ans === true){
                 let time = 120;
@@ -227,18 +226,18 @@ class Audit extends Component{
                     timeLeft: time
                 })
 
-                this.timer = setInterval(() => {
-                    let tl = this.state.timeLeft;
-                    tl -= 1;
+                // this.timer = setInterval(() => {
+                //     let tl = this.state.timeLeft;
+                //     tl -= 1;
     
-                    if(tl >= 0){
-                        this.setState({
-                            timeLeft: tl
-                        })
-                    }else{
-                        this.confirm();
-                    }
-                }, 1000);
+                //     if(tl >= 0){
+                //         this.setState({
+                //             timeLeft: tl
+                //         })
+                //     }else{
+                //         this.confirm();
+                //     }
+                // }, 1000);
             }
         })
     }
@@ -252,20 +251,6 @@ class Audit extends Component{
         }
 
         return sum/5;
-    }
-
-    isScoreOver = () =>{
-        let over = true;
-        let {score} = this.state;
-
-        for(let i=1;i<score.lenght;i++){
-            if(score[i] === 0){
-                over = false;
-                break;
-            }
-        }
-
-        return over;
     }
 
     confirm = () =>{
@@ -296,11 +281,15 @@ class Audit extends Component{
             }
         }
         clearInterval(this.timer);
+        this.setState({
+            confirm: true,
+        })
 
         const score = this.state.score;
         let result = {
             name: this.state.name,
             score: score,
+            ave,
         }
         this.socket.emit('auditScoreOver',result);
     }

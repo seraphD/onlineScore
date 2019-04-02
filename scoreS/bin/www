@@ -12,14 +12,6 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
-function avg(array){
-  let sum = 0;
-  for(let i=0;i<array.length;i++){
-    sum += array[i];
-  }
-  return sum/5;
-}
-
 var allclients = [];
 var names = [];
 var offLine = [];
@@ -47,8 +39,6 @@ io.on('connection', function(socket){
   })
 
   socket.on('auditScoreOver', function(result){
-    let r = avg(result.score);
-    result.avg = r;
     socket.broadcast.emit('showScore', result);
   })
 
@@ -61,7 +51,6 @@ io.on('connection', function(socket){
   })
 
   socket.on('watch', function(){
-    console.log(111);
     socket.broadcast.emit('watchScore');
   })
 

@@ -9,12 +9,12 @@ import Group from './container/group';
 import Score from './container/score';
 import Load from './load/load';
 import axios from 'axios';
-import config from '../config';
+import config from '../../config';
 import {connect} from 'react-redux';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import InboxIcon from '@material-ui/icons/Inbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
-import pic from '../pic/backPic_2.jpg';
+import pic from '../../pic/backPic_2.jpg';
 import Finish from './finish/finish';
 
 const styles = theme =>({
