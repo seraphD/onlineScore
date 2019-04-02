@@ -33,7 +33,7 @@
 
 # admin
 
-![admin](./pic/admin.png)
+![admin](./pic/admin.PNG)
 
 # audit
 
