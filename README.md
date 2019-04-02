@@ -33,10 +33,10 @@
 
 # admin
 
-![admin](./pic/admin.png)
+![admin](./pic/admin.PNG)
 
 # audit
 
-![audit](./pic/audit.png)
+![audit](./pic/audit.PNG)
 
 项目地址：http://47.100.45.240:3000
