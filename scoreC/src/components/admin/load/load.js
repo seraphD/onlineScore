@@ -140,6 +140,8 @@ class Load extends Component{
             pause: false,
             count: 0,
             finalScore: 0,
+            numbers: [],
+            length: 0,
         }
     }
 
@@ -148,35 +150,48 @@ class Load extends Component{
     }
 
     componentWillMount(){
-        
+        let numbers = this.getNum();
+        this.setState({numbers});
     }
 
     enqueue = (message) => {
-        if(!this.queue.full()){
-            this.queue.enqueue(message);
-        }else{
+        if(this.queue.full()){
             this.queue.dequeue();
-            this.queue.enqueue(message);
         }
+
+        this.queue.enqueue(message);
+    }
+
+    getNum = () => {
+        let audits = this.props.audits;
+        let num = [];
+
+        for(let audit of audits){
+            num.push(audit.num);
+        }
+
+        return num;
     }
 
     componentDidMount(){
         let socket = this.socket;
+        // let number = this.props.group[cur].number;
 
         socket.on('showScore', (result)=>{
-            if(result.name !== ''){
+            if(result.name !== 'ignore'){
                 let message = {
                     type: 1,
                     name: result.name,
                     score: result.ave,
                 }
-                let c = this.state.count + 1;
                 let cur = this.state.cur;
+                let c = this.state.count + 1;
 
                 this.record.push(result);
                 this.enqueue(message);
 
                 this.setState({count: c});
+                console.log(c);
                 if(c === this.props.audits.length){
                     axios.post(config.URL_S+'score', {
                         score: this.record,
@@ -214,6 +229,9 @@ class Load extends Component{
                         }
                     })
                 }
+            }else{
+                let c = this.state.count + 1;
+                this.setState({count: c});
             }
         })
 
@@ -231,7 +249,7 @@ class Load extends Component{
         })
 
         this.socket.on('newAudit', (o)=>{
-            const gpname = o;
+            const gpname = o.name;
 
             let index = -1;
             for(let i=0;i<this.props.audits.length;i++){
@@ -243,7 +261,7 @@ class Load extends Component{
                 }
             }
 
-            if(index !== 1){
+            if(index !== -1){
                 let mes = {
                     type: 5,
                     name: gpname
@@ -261,7 +279,7 @@ class Load extends Component{
         })
     }
 
-    pause = () =>{
+    finish = () =>{
         let p = this.state.pause;
         this.setState({
             pause: !p
@@ -269,7 +287,7 @@ class Load extends Component{
 
         let his = this.context.router.history;
         his.push("/main/finish");
-        this.socket.emit('stopScore');
+        this.socket.emit('scoreOver');
     }
 
     render(){
@@ -313,7 +331,7 @@ class Load extends Component{
                     <div className={classes.message}>
                         <Typography className={classes.mesTitle}>打分动态
                         {this.state.pause?<Button variant="contained" color="primary" className={classes.stopBtn} onClick={this.pause}>恢复打分</Button>:
-                        <Button variant="contained" color="secondary" className={classes.stopBtn} onClick={this.pause}>停止打分</Button>}
+                        <Button variant="contained" color="secondary" className={classes.stopBtn} onClick={this.finish}>停止打分</Button>}
                         </Typography>
                         <div className={classes.Snackbars}>
                             {queue.reverse().map((o,i) => {
@@ -363,6 +381,7 @@ function mapStateToProps(state){
     return {
       group: state.group,
       audits: state.audits,
+      numbers: state.numbers,
     }
 }
   

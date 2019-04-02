@@ -4,6 +4,7 @@ const initialState={
 	group: [],
 	audits: [],
 	random: [],
+	numbers: [],
 }
 
 const appReducer = (state=initialState, action)=>{
@@ -23,6 +24,9 @@ const appReducer = (state=initialState, action)=>{
 		}
 		case 'SET_RANDOM_GROUP': {
 			return {...state, random: action.data};
+		}
+		case 'SET_NUMBER': {
+			return {...state, numbers: action.data}
 		}
 		default: {
 			return {...state}

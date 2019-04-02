@@ -52,8 +52,8 @@ class DetailTable extends Component{
         let audits = this.props.audits;
         let tableData = [];
 
-        audits.map((name,i) => {
-            tableData.push(this.createData(name,0,0,0,0,0,0,false,true));
+        audits.map((audit,i) => {
+            tableData.push(this.createData(audit.name,0,0,0,0,0,0,false,true));
             return 1;
         })
         this.setState({tableData});

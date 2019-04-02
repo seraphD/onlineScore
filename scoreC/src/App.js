@@ -37,12 +37,12 @@ class App extends Component {
             }
           })
         }else{
-          axios.post(config.URL_S+'login', { number: values.number })
+          axios.post(config.URL_S+'audit/login', { number: values.number })
           .then(res => {
             let auth = res.data.auth;
             if( auth === 1 ){
               this.props.login( values.number);
-              his.push('/animate');
+              his.push('/audit');
             }else{
               alert('登录失败！请检查号码是否正确或者管理员是否已经开始初始化！');
             }

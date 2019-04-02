@@ -1,4 +1,5 @@
 var express = require('express');
+var db = require('./db/mysql.js');
 var router = express.Router();
 var start = 0;
 var admin = 0;
@@ -182,10 +183,11 @@ router.post('/finish', (req, res, next)=>{
   let highScore = 0;
   let wellScore = 0;
   let middleScore = 0;
-  let passScore = 0
+  let passScore = 0;
 
   for(let i=0; i<record.length; i++){
     var r = record[i];
+    db.update('user', {grade: r.score}, {title: r.title});
 
     catagory.push(r.title);
     grade.push(r.score);

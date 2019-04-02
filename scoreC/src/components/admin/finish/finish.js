@@ -66,7 +66,6 @@ class Finish extends Component{
         axios.post(config.URL_S+'finish')
         .then(res =>{
             let data = res.data;
-            console.log(data);
             let {highRate, wellRate, middleRate, passRate} = data;
             let temp = configLine;
             let pie = configPie;

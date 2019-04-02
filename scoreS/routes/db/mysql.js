@@ -81,21 +81,29 @@ exports.update = (table,field,filter) => {
 		for(let p in field){
 			set += p + "=" + field[p] + ","; 
 		}
-		set.substr(set.length-1,1);
+		set = set.substr(0,set.length-1);
 	}else return;
 
 	let fl = "";
 	if(JSON.stringify(filter) !== '{}'){
-		fl = "where";
+		fl = "where ";
 
 		for(var p in filter){
 			fl += p + "=" + filter[p] + "&&";
 		}
-		fl.substr(fl.length-2,2);
+		fl = fl.substr(0, fl.length-2);
 	}
 
-	let sql = `update ${table} set ${set} ${fl}`;
+	let sql = `update ${table} set ${set} "${fl}"`;
 	connection.query(sql, (err,results)=>{
 		if(err)throw err;
+	})
+}
+
+exports.getData = () =>{
+	let sql = "select * from user";
+	connection.query(sql, (err,results)=>{
+		if(err)throw err;
+		return results;
 	})
 }

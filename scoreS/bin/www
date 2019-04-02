@@ -25,9 +25,9 @@ io.on('connection', function(socket){
     socket.broadcast.emit('auditInit');
   })
 
-  socket.on('loginOver', function(gpName){
-    names.push(gpName);
-    socket.broadcast.emit('newAudit',gpName);
+  socket.on('loginOver', function(o){
+    names.push(o.name);
+    socket.broadcast.emit('newAudit',o);
   })
 
   socket.on('score', function(info){

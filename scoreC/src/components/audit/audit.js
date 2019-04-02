@@ -120,7 +120,10 @@ class Audit extends Component{
                 this.setState({
                     name: res.data.name
                 })
-                this.socket.emit('loginOver', res.data.name);
+                this.socket.emit('loginOver', {
+                    name: res.data.name,
+                    num
+                });
 
                 axios.post(config.URL_S+'getRate')
                 .then(res =>{
@@ -184,6 +187,8 @@ class Audit extends Component{
                     start: true,
                     ave: 0,
                 })
+
+                this.socket.emit('auditScoreOver',{name: 'ignore', score: [0,0,0,0,0,0], ave: 0});
             }
 
             $('.audit-score').removeClass('audit-score-selected');
@@ -292,7 +297,7 @@ class Audit extends Component{
         }else{
             return(
                 <div className={classes.wait}>
-                   <Typography variant="h4"><a target="_blank" href={this.state.github}>{info.title}</a></Typography>
+                   <Typography variant="h4"><a target="_blank" href={this.state.github} rel="noopener noreferrer">{info.title}</a></Typography>
                 </div>
             )
         }

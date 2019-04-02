@@ -13,7 +13,7 @@ import logger from 'redux-logger';
 import appReducer from './reducers/index';
 import rootSaga from './sagas/index';
 import * as serviceWorker from './serviceWorker';
-import MainLayout from './components/watch/main';
+import MainLayout from './components/admin/main';
 
 const sagaMiddleware=createSagaMiddleware();
 const middlewares=[sagaMiddleware,logger];

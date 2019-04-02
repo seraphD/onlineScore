@@ -76,6 +76,7 @@ class Score extends Component{
         super(props);
         this.socket = io(config.URL_S);
         this.audits = [];
+        this.numbers = [];
         this.state = {
             cur: -1, 
             dis: [],
@@ -106,9 +107,11 @@ class Score extends Component{
 
     componentDidMount(){
         this.socket.on('newAudit', (o)=>{
-            const gpname = o;
+            const gpname = o.name;
+            const num = o.num;
             if(!this.find(gpname)){
                 this.audits.push(o);
+                this.numbers.push(num);
 
                 let c = this.state.count;
                 this.setState({
@@ -125,11 +128,12 @@ class Score extends Component{
     start = () =>{
         let his = this.context.router.history;
         let audits = this.audits;
+        let numbers = this.numbers;
         let group = this.props.group;
 
         this.props.setAudits(audits);
+        this.props.setNumber(numbers);
         this.socket.emit('score',{title: group[0].title, github: group[0].github, number: group[0].number});
-        //this.socket.emit('watch');
         his.push('/main/load');
     }
 
@@ -311,9 +315,12 @@ function mapDispatchToProps(dispatch){
       setAudits(data){
         dispatch({type:'SET_AUDITS',data})
       },
+      setNumber(data){
+        dispatch({type:'SET_NUMBER',data})
+      },
       setData(data){
         dispatch({type:'SET_DATA',data});
-      }
+      }, 
     }
 }
 
