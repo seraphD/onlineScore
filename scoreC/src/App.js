@@ -37,7 +37,7 @@ class App extends Component {
             }
           })
         }else{
-          axios.post(config.URL_S+'audit/login', { number: values.number })
+          axios.post(config.URL_S+'login', { number: values.number })
           .then(res => {
             let auth = res.data.auth;
             if( auth === 1 ){
