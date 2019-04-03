@@ -53,7 +53,7 @@ class DetailTable extends Component{
         let tableData = [];
 
         audits.map((audit,i) => {
-            tableData.push(this.createData(audit.name,0,0,0,0,0,0,false,true));
+            tableData.push(this.createData(audit,0,0,0,0,0,0,false,true));
             return 1;
         })
         this.setState({tableData});
@@ -103,11 +103,12 @@ class DetailTable extends Component{
         })
 
         socket.on('auditDis', (o)=>{
-            let {index} = o;
-            
+            let {name} = o;
             let temp = this.state.tableData;
-            if(index > 0){
-                temp[index-1].online = false;
+            let index = this.find(name);
+
+            if(index > -1){
+                temp[index].online = false;
             }
 
             this.setState({
@@ -116,7 +117,7 @@ class DetailTable extends Component{
         })
 
         socket.on('newAudit', (o)=>{
-            let index = this.find(o);
+            let index = this.find(o.name);
 
             if(index !== -1){
                 let temp = this.state.tableData;
@@ -125,6 +126,10 @@ class DetailTable extends Component{
                 this.setState({
                     tableData: temp,
                 })
+
+                if(temp[index].confirm){
+                    socket.emit('scoreOver');
+                }
             }
         })
 

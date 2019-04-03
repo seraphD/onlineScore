@@ -17,16 +17,12 @@ var names = [];
 var offLine = [];
 
 io.on('connection', function(socket){
-  if(allclients.indexOf(socket) === -1){
-    allclients.push(socket);
-  }
-
   socket.on('init', function(){
     socket.broadcast.emit('auditInit');
   })
 
   socket.on('loginOver', function(o){
-    names.push(o.name);
+    allclients[o.name] = socket;
     socket.broadcast.emit('newAudit',o);
   })
 
@@ -59,14 +55,10 @@ io.on('connection', function(socket){
   })
 
   socket.on('disconnect', function(){
-    var i = allclients.indexOf(socket);
-    var name = offLine[i+1];
-    offLine[name] = i+1;
-    allclients[i] = null;
-
-    allclients.splice(i,1);
-    if(i>0){
-      socket.broadcast.emit('auditDis', {index: i});
+    for(let p in allclients){
+      if(allclients[p] === socket){
+        socket.broadcast.emit('auditDis', {name: p});
+      }
     }
   })
 })

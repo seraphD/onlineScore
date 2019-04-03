@@ -191,7 +191,7 @@ class Load extends Component{
                 this.enqueue(message);
 
                 this.setState({count: c});
-                console.log(c);
+
                 if(c === this.props.audits.length){
                     axios.post(config.URL_S+'score', {
                         score: this.record,
@@ -236,8 +236,8 @@ class Load extends Component{
         })
 
         this.socket.on('auditDis', (o)=>{
-            const {index} = o;
-            let name = this.props.audits[index-1];
+            const {name} = o;
+            // let name = this.props.audits[index-1];
 
             let message = {
                 type: 4,
@@ -269,6 +269,9 @@ class Load extends Component{
 
                 this.enqueue(mes);
                 this.setState({});
+                let {cur} = this.state;
+                let group = this.props.group[cur];
+                this.socket.emit('score',{title: group.title, github: group.github, number: group.number});
             }
         })
     }

@@ -110,7 +110,7 @@ class Score extends Component{
             const gpname = o.name;
             const num = o.num;
             if(!this.find(gpname)){
-                this.audits.push(o);
+                this.audits.push(o.name);
                 this.numbers.push(num);
 
                 let c = this.state.count;
