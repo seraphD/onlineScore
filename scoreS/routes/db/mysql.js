@@ -89,12 +89,12 @@ exports.update = (table,field,filter) => {
 		fl = "where ";
 
 		for(var p in filter){
-			fl += p + "=" + filter[p] + "&&";
+			fl += `${p}="${filter[p]}&&"`;
 		}
 		fl = fl.substr(0, fl.length-2);
 	}
 
-	let sql = `update ${table} set ${set} "${fl}"`;
+	let sql = `update ${table} set ${set} ${fl}`;
 	connection.query(sql, (err,results)=>{
 		if(err)throw err;
 	})
