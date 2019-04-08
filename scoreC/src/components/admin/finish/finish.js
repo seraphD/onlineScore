@@ -42,9 +42,13 @@ const styles = theme =>({
     title: {
         color: 'white',
         fontSize: '1.5em',
+        position: 'relative',
+        top: '15px'
     },
     subtitle: {
         color: 'white',
+        position: 'relative',
+        top: '15px'
     },
     tab: {
         fontSize: '1em',
@@ -93,7 +97,6 @@ class Finish extends Component{
                 name: "及格",
                 y: passRate * 100,
             })
-            console.log(pie.series)
 
             this.setState({
                 chartsData: temp,

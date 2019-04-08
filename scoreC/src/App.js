@@ -43,6 +43,9 @@ class App extends Component {
             if( auth === 1 ){
               this.props.login( values.number);
               his.push('/audit');
+            }else if(auth === 2){
+              this.props.login( values.number);
+              his.push('/audit');
             }else{
               alert('登录失败！请检查号码是否正确或者管理员是否已经开始初始化！');
             }

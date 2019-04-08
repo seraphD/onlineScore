@@ -8,8 +8,6 @@ import {HashRouter as Router,Route,Switch,withRouter} from 'react-router-dom';
 import Group from './container/group';
 import Score from './container/score';
 import Load from './load/load';
-import axios from 'axios';
-import config from '../../config';
 import {connect} from 'react-redux';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import InboxIcon from '@material-ui/icons/Inbox';
@@ -109,20 +107,16 @@ class MainLayout extends Component{
     };
 
     componentWillMount(){
-        axios.post(config.URL_S+'main/getGroup')
-        .then(res =>{
-            let data = res.data;
+        // axios.post(config.URL_S+'main/getGroup')
+        // .then(res =>{
+        //     let data = res.data;
 
-            axios.post(config.URL_S+'main/random', {group: data})
-            .then(res => {
-                let data = res.data.group;
-                this.props.getGroup(data);
-            })
-        })
-    }
-
-    componentWillUnmount(){
-        axios.post(config.URL_S+'adminLogout');
+        //     axios.post(config.URL_S+'main/random', {group: data})
+        //     .then(res => {
+        //         let data = res.data.group;
+        //         this.props.getGroup(data);
+        //     })
+        // })
     }
 
     render(){

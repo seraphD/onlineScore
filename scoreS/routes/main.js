@@ -3,6 +3,7 @@ var router = express.Router();
 var db = require('./db/mysql');
 
 var random = [];
+var backup = [];
 
 function randomSort(a,b){
     return Math.random() > 0.5 ? -1: 1;
@@ -22,12 +23,13 @@ router.post('/addGroup', (req, res, next)=>{
 router.post('/random', (req, res, next)=>{
     if(random.length === 0){
         const {group} = req.body;
-        group.sort(randomSort);
+        backup = group.slice();
         random = group.slice();
+        random.sort(randomSort);
 
-        res.json({group});
+        res.json({random});
     }else{
-        res.json({group: random});
+        res.json({group: random, backup});
     }
 })
 

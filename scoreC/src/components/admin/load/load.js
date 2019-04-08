@@ -218,7 +218,7 @@ class Load extends Component{
                                     cur: cur + 1,
                                     finalScore: 0,
                                 })
-                                this.socket.emit('score',{title: group.title, github: group.github, number: group.number});
+                                this.socket.emit('score',{title: group.title, github: group.github, number: group.number, cur: this.state.cur});
                             }, 5000);
                         }else{
                             let mes = {
@@ -237,7 +237,6 @@ class Load extends Component{
 
         this.socket.on('auditDis', (o)=>{
             const {name} = o;
-            // let name = this.props.audits[index-1];
 
             let message = {
                 type: 4,
@@ -253,7 +252,7 @@ class Load extends Component{
 
             let index = -1;
             for(let i=0;i<this.props.audits.length;i++){
-                let temp = this.props.audits[i].name;
+                let temp = this.props.audits[i];
 
                 if(gpname === temp){
                     index = i;
@@ -271,7 +270,8 @@ class Load extends Component{
                 this.setState({});
                 let {cur} = this.state;
                 let group = this.props.group[cur];
-                this.socket.emit('score',{title: group.title, github: group.github, number: group.number});
+                this.socket.emit('score', {title: group.title, github: group.github, number: group.number, cur: this.state.cur});
+                this.socket.emit('askContinue', {name: gpname});
             }
         })
     }

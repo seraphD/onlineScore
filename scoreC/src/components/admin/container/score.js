@@ -88,6 +88,7 @@ class Score extends Component{
             hightScoreRate: 0,
             lowScoreRate: 0,
             success: false,
+            data: [],
         }
     }
 
@@ -98,7 +99,7 @@ class Score extends Component{
     find = (name) =>{
         let audits = this.audits;
         for(let i=0;i<audits.length;i++){
-            if(audits.name === name){
+            if(audits[i] === name){
                 return true
             }
         }
@@ -129,11 +130,12 @@ class Score extends Component{
         let his = this.context.router.history;
         let audits = this.audits;
         let numbers = this.numbers;
-        let group = this.props.group;
+        let group = this.state.data;
 
         this.props.setAudits(audits);
         this.props.setNumber(numbers);
         this.socket.emit('score',{title: group[0].title, github: group[0].github, number: group[0].number});
+        axios.post(config.URL_S+"start");
         his.push('/main/load');
     }
 
@@ -178,8 +180,11 @@ class Score extends Component{
 
         const handleFileRead = (e) =>{
             const content = fileReader.result;
-            console.log(content);
-            this.setState({imported: true, success: true});
+            const data = JSON.parse(content).data;
+            axios.post(config.URL_S+"setData", {group: data});
+            axios.post(config.URL_S+"main/random", {group: data});
+            this.props.getGroup(data);
+            this.setState({imported: true, success: true, data});
         }
 
         const handleFileChosen = (file) =>{
@@ -246,7 +251,7 @@ class Score extends Component{
                     </Button>
                     <div className={classes.loginProgress}>
                         <Typography variant="h4">
-                            {this.state.count}/{this.props.group.length}名评委登录了系统
+                            {this.state.count}/{this.state.data.length}名评委登录了系统
                         </Typography>
                     </div>
                     </div>:this.ImportFile(classes)
@@ -320,7 +325,7 @@ function mapDispatchToProps(dispatch){
       },
       setData(data){
         dispatch({type:'SET_DATA',data});
-      }, 
+      },
     }
 }
 

@@ -13,8 +13,35 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 var allclients = [];
-var names = [];
-var offLine = [];
+var confirm = [];
+
+function find(name){
+  for(let p in confirm){
+    if(p === name){
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function isOver(){
+  for(let p in confirm){
+    if(!confirm[p]){
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function reset(){
+  for(let p in confirm){
+    confirm[p] = false;
+  }
+
+  return 1;
+}
 
 io.on('connection', function(socket){
   socket.on('init', function(){
@@ -23,6 +50,10 @@ io.on('connection', function(socket){
 
   socket.on('loginOver', function(o){
     allclients[o.name] = socket;
+    if(!find(o.name)){
+      confirm[o.name] = false;
+    }
+
     socket.broadcast.emit('newAudit',o);
   })
 
@@ -35,23 +66,18 @@ io.on('connection', function(socket){
   })
 
   socket.on('auditScoreOver', function(result){
+    confirm[result.name] = true;
+    if(isOver()){
+      reset();
+    }
     socket.broadcast.emit('showScore', result);
   })
 
-  socket.on('isContinue',function(name){
-    socket.broadcast.emit('askContinue',name);
-  })
-
-  socket.on('ansContinue',function(o){
-    socket.broadcast.emit('ansIsContinue',o);
-  })
-
-  socket.on('watch', function(){
-    socket.broadcast.emit('watchScore');
-  })
-
-  socket.on('auditLogout', function(name){
-    
+  socket.on('askContinue', function(n){
+    console.log(confirm);
+    if(confirm[n.name]){
+      socket.broadcast.emit('alreadyScore', {n});
+    }
   })
 
   socket.on('disconnect', function(){

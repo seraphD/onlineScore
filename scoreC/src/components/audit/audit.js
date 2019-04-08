@@ -172,7 +172,7 @@ class Audit extends Component{
                     info: info,
                     confirm: false,
                     timeLeft: time,
-                    cur: cur + 1,
+                    cur: info.cur,
                     score: [0,0,0,0,0,0],
                     start: true,
                     ave: 0,
@@ -188,7 +188,7 @@ class Audit extends Component{
                     ave: 0,
                 })
 
-                this.socket.emit('auditScoreOver',{name: 'ignore', score: [0,0,0,0,0,0], ave: 0});
+                this.socket.emit('auditScoreOver', {name: 'ignore', score: [0,0,0,0,0,0], ave: 0});
             }
 
             $('.audit-score').removeClass('audit-score-selected');
@@ -203,20 +203,14 @@ class Audit extends Component{
 
         this.socket.on('stopScore',()=>{
             this.setState({
-                confirm:true
+                confirm: true
             })
-            clearInterval(this.timer);
         })
 
-        this.socket.on('ansIsContinue', (o)=>{
-            const {ans,name} = o;
-
-            if(name === this.state.name && ans === true){
-                let time = 120;
-
+        this.socket.on('alreadyScore', (object)=>{
+            if(object.n.name === this.state.name){
                 this.setState({
-                    confirm: false,
-                    timeLeft: time
+                    confirm: true,
                 })
             }
         })
@@ -304,7 +298,9 @@ class Audit extends Component{
     }
 
     render(){
-        const {classes} = this.props
+        const {classes} = this.props;
+        const {confirm} = this.state;
+        console.log(confirm);
 
         return(
             <div className={classes.root}>

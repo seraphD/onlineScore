@@ -5,25 +5,7 @@ var start = 0;
 var admin = 0;
 var reconnect = 0;
 
-var data = [
-  {"id":"1","member":"马海强、徐鑫雨、张　凡 ","title":"二手物品交易网站","github":"https://github.com/WebProject111/web","mobile":"15058613833","login":"0","grade":"82"},
-  {"id":"2","member":"郑柳、陈铭璇、王胤凯 ","title":"书籍收藏推荐","github":"https://github.com/xiaxixi/Book-recommendation-collection","mobile":"15990184770","login":"0","grade":"92"},
-  {"id":"3","member":"张鑫、祝夏云、组长 ","title":"形体管理","github":"https://github.com/zhangxin1102/zhangxin.github.com","mobile":"18969949128","login":"0","grade":"90"},
-  {"id":"4","member":"杨德杰、干臻原、李伊宁 ","title":"代码技术问题社区","mobile":"15990184787","login":"0","grade":"90"},
-  {"id":"6","member":"万峰、朱勋韬、谢强 ","title":"聊天室","github":"https://github.com/XQ0118/project-desktop.git","mobile":"17376507894","login":"0","grade":"90"},
-  {"id":"7","member":"王绎朝、梅思远 ","title":"Duel - 手势游戏","github":"https://github.com/Darkmota/Duel","mobile":"15990184717","login":"0","grade":"83"},
-  {"id":"9","member":"陈豪 ","title":" 微信小程序","github":"https://github.com/15305813298/-","mobile":"15305813298","login":"0","grade":"88"},
-  {"id":"14","member":"李帆顺、周渊博 ","title":" mk编辑器","github":"https://github.com/oddisland/Draft","mobile":"15990184849","login":"0","grade":"96"},
-  {"id":"5","member":"任亚伟、彭艳 ","title":"Resume Making","github":"https://github.com/natsuRen/web","mobile":"15355468038","login":"0","grade":"0"},
-  {"id":"8","member":"罗淳、付朝燕 ","title":"亦书亦音","github":"https://github.com/slcyyy/ysyy","mobile":"15990184855","login":"0","grade":"0"},
-  {"id":"10","member":"叶艳洁、蔡雅洁、章薇、陶娣 ","title":" 微信小程序-零拾实验室","github":"https://github.com/PTaoer/WebProgramming","mobile":"15990184827","login":"0","grade":"0"},
-  {"id":"11","member":"周威炜、顾晨俊、钱根、张承成 ","title":"论坛","mobile":"18989845722","login":"0","grade":"0"},
-  {"id":"12","member":"陈其快、吴震、王鑫、程广友 ","title":"音乐播放器","github":"https://github.com/klaaay/My-Silly-Music-Player","mobile":"15990184811","login":"0","grade":"0"},
-  {"id":"13","member":"吴佳琪、陈贵婷、王秸 ","title":"照片编辑器","github":"https://github.com/Fionakiki/Myproject","mobile":"15355467622","login":"0","grade":"0"},
-  {"id":"15","member":"陈俊卿、齐聪聪 ","title":" 淘宝","github":"https://github.com/xylkh/web_project  ","mobile":"18989849378","login":"0","grade":"0"},
-  {"id":"16","member":"李博乐、孔昊东 ","title":" 影视推荐","github":"https://github.com/eliotkong/web_movie_hznu","mobile":"15990184818","login":"0","grade":"0"}
-]
-
+var data = []
 var record = [];
 var connect = [];
 var finish = 1;
@@ -132,6 +114,12 @@ router.post('/init', (req, res, next)=> {
   res.end();
 });
 
+router.post('/setData', (req, res)=>{
+  const {group} = req.body;
+  data = group.slice();
+  res.end();
+})
+
 router.post('/adminLogin', (req, res)=>{
   var auth = 0;
   auth = 1;
@@ -144,17 +132,26 @@ router.post('/login', (req, res) => {
   var auth = 0;
   if(start === 1){
     for(var i=0;i<data.length;i++){
-      if( number === data[i].mobile ){
+      if( number === data[i].mobile && data[i].login === "0"){
         auth = 1;
+        data[i].login = "1";
         connect.push(number);
         break;
       }
     }
   }else if(reconnect === 1){
-    auth = Reconnect(number);
+    if(Reconnect(number)){
+      auth = 2;
+    }else auto = 0;
   }
 
   res.json({auth});
+})
+
+router.post('/start', (req, res) =>{
+  start = 0;
+  reconnect = 1;
+  res.end();
 })
 
 router.post('/score', (req, res, next)=>{
@@ -187,7 +184,7 @@ router.post('/finish', (req, res, next)=>{
 
   for(let i=0; i<record.length; i++){
     var r = record[i];
-    db.update('user', {grade: r.score}, {title: r.title});
+    // db.update('user', {grade: r.score}, {title: r.title});
 
     catagory.push(r.title);
     grade.push(r.score);

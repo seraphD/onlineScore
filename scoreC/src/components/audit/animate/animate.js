@@ -51,6 +51,7 @@ class Animate extends Component{
             now: 0,
             tableData: [],
             score: true,
+            length: 0,
         }
     }
 
@@ -59,24 +60,18 @@ class Animate extends Component{
     }
 
     componentWillMount(){
-        axios.post(config.URL_S+"main/getGroup")
+        axios.post(config.URL_S+'main/random')
         .then(res => {
-            let data = res.data;
+            let data = res.data.group;
+            let backup = res.data.backup;
+
             this.setState({
-                data,
+                random: data,
+                data: backup,
                 length: data.length,
             })
-
-            axios.post(config.URL_S+'main/random', {group: data})
-            .then(res => {
-                let data = res.data.group;
-
-                this.setState({
-                    random: data,
-                })
-                this.animate();
-                this.props.setRandomGroup(data);
-            })           
+            this.animate();
+            this.props.setRandomGroup(data);
         })
     }
 
@@ -98,12 +93,12 @@ class Animate extends Component{
                     let {length, now, random, data, tableData} = this.state;
                     let pos = parseInt(Math.random() * length);
 
-                    if(data.length > 0 && random.length > 0){
+                    if(random.length > 0){
                         if(random[now].title === data[pos].title){
                             let row = {
                                 id: now,
                                 title: data[pos].title,
-                                number: data[pos].number,
+                                number: data[pos].mobile,
                             }
         
                             now += 1;

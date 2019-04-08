@@ -126,18 +126,7 @@ class DetailTable extends Component{
                 this.setState({
                     tableData: temp,
                 })
-
-                if(temp[index].confirm){
-                    socket.emit('scoreOver');
-                }
             }
-        })
-
-        socket.on('askContinue', (name)=>{
-            let index = this.find(name);
-            let ans = this.state.tableData[index].confirm;
-
-            socket.emit('ansContinue', {name,ans});
         })
     }
 
