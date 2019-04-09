@@ -76,13 +76,6 @@ function isValid(data){
   return {max, min, max_index, min_index, result};
 }
 
-function transform(num){
-  let l = data.length;
-  num = parseInt(num)/100 * l;
-  num = Math.round(num);
-  return num;
-}
-
 function deviation(arr){
   let sum = 0;
 
@@ -155,14 +148,16 @@ router.post('/start', (req, res) =>{
 })
 
 router.post('/score', (req, res, next)=>{
-  const {score, cur} = req.body;
+  const {score, cur, group} = req.body;
   var valid = isValid(score);
   confirm = 1;
   tempScore = valid.result;
 
   let temp = {
     id: cur, 
-    title: data[cur].title,
+    title: group.title,
+    member: group.member,
+    number: group.mobile,
     score: parseInt(valid.result)
   };
 
@@ -175,52 +170,45 @@ router.post('/score', (req, res, next)=>{
 router.post('/finish', (req, res, next)=>{
   start = 0;
   finish = 1;
-  var catagory = [];
-  var grade = [];
-  let highScore = 0;
-  let wellScore = 0;
-  let middleScore = 0;
-  let passScore = 0;
+  record.sort(function(a,b){return b.score-a.score;});
 
-  for(let i=0; i<record.length; i++){
-    var r = record[i];
-    // db.update('user', {grade: r.score}, {title: r.title});
-
-    catagory.push(r.title);
-    grade.push(r.score);
-
-    if(r.score >= 90){
-      highScore += 1;
-    }else if(r.score >= 80){
-      wellScore += 1;
-    }else if(r.score >= 70){
-      middleScore += 1;
-    }else passScore += 1;
-  }
-
-  highRate = highScore / record.length;
-  wellRate = wellScore / record.length;
-  middleRate = middleScore / record.length;
-  passRate = passScore / record.length;
-
-  res.json({record, catagory, grade, highRate, wellRate, middleRate, passRate});
+  res.json({record});
 })
 
 router.post('/setRate', (req, res, next)=>{
   const {hightScoreRate, lowScoreRate} = req.body;
-  rateHigh = hightScoreRate;
-  rateLow = lowScoreRate;
+  rateHigh = hightScoreRate/100;
+  rateLow = lowScoreRate/100;
   start = 1;
   
   res.end();
 })
 
-router.post('/getRate', (req, res, next)=>{
-  var high = transform(rateHigh);
-  var low = transform(rateLow);
-  var length = data.length;
+function addUp(array){
+  let s = 0;
+  for(let i=0; i< array.length; i++){
+    s += parseInt(array[i]);
+  }
+  return s;
+}
 
-  res.json({high, low, length});
+router.post('/getRate', (req, res, next)=>{
+  var sum = (data.length - 1) * 5;
+  var vote = [0,0,0,0,0];
+
+  vote[0] = parseInt(sum * rateHigh * 0.25);
+  vote[1] = parseInt(sum * rateHigh * 0.75);
+  vote[4] = parseInt(sum * rateLow);
+  
+  var left = sum * (1- rateHigh - rateLow);
+  vote[2] = parseInt(left * 0.4);
+  vote[3] = parseInt(left * 0.6);
+  
+  while(addUp(vote) !== sum){
+    vote[2] += 1;
+  }
+
+  res.json({vote, length: data.length});
 })
 
 module.exports = router;

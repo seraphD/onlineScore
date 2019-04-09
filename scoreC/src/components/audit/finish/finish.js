@@ -12,6 +12,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+
 const styles = theme =>({
     root: {
         height: 750,
@@ -23,7 +24,7 @@ const styles = theme =>({
         minHeight: '650px',
         display: 'inline-block',
         verticalAlign: 'top',
-        margin: '80px auto 0 15px',
+        margin: '80px auto 0 159px',
         textAlign: 'left',
     },
     head: {
@@ -77,9 +78,8 @@ class Finish extends Component{
     }
 
     render(){
-        const {classes} = this.props;
+        const {classes, num} = this.props;
         const {record} = this.state;
-        console.log(record);
 
         return(
             <div className={classes.root}>
@@ -104,13 +104,21 @@ class Finish extends Component{
                     </TableHead>
                     <TableBody className={classes.tableBody}>
                         {record.map((o, i) => (
+                        o.number === num?
+                        <TableRow key={o.id} style={{backgroundColor:'#9ccc65'}}>   
+                            <TableCell omponent="th" scope="row">{i + 1}</TableCell>
+                            <TableCell>{o.title}</TableCell>
+                            <TableCell>{o.number}</TableCell>
+                            <TableCell>{o.member}</TableCell>
+                            <TableCell>{o.score}</TableCell>
+                        </TableRow>:
                         <TableRow key={o.id}>   
                             <TableCell omponent="th" scope="row">{i + 1}</TableCell>
                             <TableCell>{o.title}</TableCell>
                             <TableCell>{o.number}</TableCell>
                             <TableCell>{o.member}</TableCell>
                             <TableCell>{o.score}</TableCell>
-                        </TableRow> 
+                        </TableRow>
                         ))}
                     </TableBody>
                     </Table>
@@ -123,6 +131,7 @@ class Finish extends Component{
 function mapStateToProps(state){
     return {
       record: state.record,
+      num: state.number,
     }
 }
   

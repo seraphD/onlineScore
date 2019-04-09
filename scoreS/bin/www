@@ -65,6 +65,10 @@ io.on('connection', function(socket){
     socket.broadcast.emit('stopScore');
   })
 
+  socket.on('finish', function(){
+    socket.broadcast.emit('watchrank');
+  })
+
   socket.on('auditScoreOver', function(result){
     confirm[result.name] = true;
     if(isOver()){
@@ -74,7 +78,6 @@ io.on('connection', function(socket){
   })
 
   socket.on('askContinue', function(n){
-    console.log(confirm);
     if(confirm[n.name]){
       socket.broadcast.emit('alreadyScore', {n});
     }

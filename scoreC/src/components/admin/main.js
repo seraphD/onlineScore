@@ -106,19 +106,6 @@ class MainLayout extends Component{
         }else his.push('/main');
     };
 
-    componentWillMount(){
-        // axios.post(config.URL_S+'main/getGroup')
-        // .then(res =>{
-        //     let data = res.data;
-
-        //     axios.post(config.URL_S+'main/random', {group: data})
-        //     .then(res => {
-        //         let data = res.data.group;
-        //         this.props.getGroup(data);
-        //     })
-        // })
-    }
-
     render(){
         const {classes} = this.props;
 

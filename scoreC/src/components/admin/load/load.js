@@ -175,7 +175,6 @@ class Load extends Component{
 
     componentDidMount(){
         let socket = this.socket;
-        // let number = this.props.group[cur].number;
 
         socket.on('showScore', (result)=>{
             if(result.name !== 'ignore'){
@@ -196,6 +195,7 @@ class Load extends Component{
                     axios.post(config.URL_S+'score', {
                         score: this.record,
                         cur: this.state.cur,
+                        group: this.props.group[cur],
                     }).then(res => {
                         let finalScore = res.data.result.result;
                         let mes = {
@@ -218,7 +218,8 @@ class Load extends Component{
                                     cur: cur + 1,
                                     finalScore: 0,
                                 })
-                                this.socket.emit('score',{title: group.title, github: group.github, number: group.number, cur: this.state.cur});
+                                
+                                this.socket.emit('score',{title: group.title, github: group.github, number: group.mobile, cur: this.state.cur});
                             }, 5000);
                         }else{
                             let mes = {
@@ -290,7 +291,7 @@ class Load extends Component{
 
         let his = this.context.router.history;
         his.push("/main/finish");
-        this.socket.emit('scoreOver');
+        this.socket.emit('finish');
     }
 
     render(){

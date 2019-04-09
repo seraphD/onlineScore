@@ -5,6 +5,7 @@ import App from './App';
 import Audit from './components/audit/audit';
 import Animate from './components/audit/animate/animate';
 import require_auth from './components/require_auth/require_auth';
+import Finish from './components/audit/finish/finish.js';
 import {HashRouter as Router,Route,Switch,withRouter} from 'react-router-dom';
 import {createStore, applyMiddleware} from 'redux';
 import createSagaMiddleware from 'redux-saga';
@@ -24,6 +25,7 @@ sagaMiddleware.run(rootSaga);
 const Page=withRouter((props)=>{
 	return(
 		<Switch>
+			<Route path='/audit/finish' component={require_auth(Finish)}/>
 			<Route path='/animate' component={Animate}/>
             <Route path='/audit' component={require_auth(Audit)}/>
 			<Route path='/main' component={MainLayout}/>

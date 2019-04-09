@@ -134,7 +134,7 @@ class Score extends Component{
 
         this.props.setAudits(audits);
         this.props.setNumber(numbers);
-        this.socket.emit('score',{title: group[0].title, github: group[0].github, number: group[0].number});
+        this.socket.emit('score',{title: group[0].title, github: group[0].github, number: group[0].mobile, cur: 0});
         axios.post(config.URL_S+"start");
         his.push('/main/load');
     }
@@ -182,8 +182,14 @@ class Score extends Component{
             const content = fileReader.result;
             const data = JSON.parse(content).data;
             axios.post(config.URL_S+"setData", {group: data});
-            axios.post(config.URL_S+"main/random", {group: data});
-            this.props.getGroup(data);
+            axios.post(config.URL_S+"main/random", {group: data})
+            .then(res => {
+                let group = res.data.group;
+                this.props.getGroup(group);
+                this.setState({
+                    data: group,
+                })
+            });
             this.setState({imported: true, success: true, data});
         }
 

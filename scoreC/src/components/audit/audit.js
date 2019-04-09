@@ -70,14 +70,14 @@ const styles = theme =>({
     progress: {
         display: 'inline-block',
         verticalAlign: 'top',
-        margin: '0 0 0 850px',
+        margin: '0 0 0 800px',
     },
     github: {
         margin: '30px 0 0 0',
         color: 'white',
     },
     grade: {
-        margin: '80px 0 0 50px',
+        margin: '50px 0 0 50px',
         color: '#b71c1c',
     },
     notice: {
@@ -87,6 +87,9 @@ const styles = theme =>({
         backgroundColor: '#880e4f',
         margin: '20px 0 0 0',
         padding: '10px',
+    },
+    left: {
+        margin: '5px 0 5px 0',
     }
 })
 
@@ -104,6 +107,7 @@ class Audit extends Component{
             cur: -1,
             start: false,
             ave: 0,
+            vote: [],
         }
     }
 
@@ -127,12 +131,9 @@ class Audit extends Component{
 
                 axios.post(config.URL_S+'getRate')
                 .then(res =>{
-                    const {high, low, length} = res.data;
-
-                    this.setState({high, low, length,
-                        highLeft: high,
-                        lowleft: low,
-                    });
+                    let vote = res.data.vote;
+                    let length = res.data.length;
+                    this.setState({vote, length});
                 })
             })
         }
@@ -214,6 +215,10 @@ class Audit extends Component{
                 })
             }
         })
+
+        this.socket.on('watchrank', ()=>{
+            this.context.router.history.push('/audit/finish');
+        })
     }
 
     ave = () =>{
@@ -228,42 +233,28 @@ class Audit extends Component{
     }
 
     confirm = () =>{
-        let ave = this.state.ave;
-        if(ave >= 90){
-            let {highLeft} = this.state;
-            if(highLeft > 0){
-                this.setState({
-                    highLeft: highLeft-1,
-                })
-            }else{
-                alert("你不能打这个分数!");
-                return;
+        let {ave, score, vote, name} = this.state;
+        let temp = vote.slice();
+        for(let i=0; i<score.length; i++){
+            if(score[i] > 0){
+                let index = 4 - (score[i] - 60)/10;
+                
+                if(temp[index]){
+                    temp[index] -= 1;
+                }else{
+                    alert("请调整您的打分！！");
+                    return;
+                }
             }
         }
-
-        if(ave >= 60 && ave < 70){
-            let {lowleft} = this.state;
-            if(lowleft > 0){
-                this.setState({
-                    lowleft: lowleft-1,
-                })
-            }else{
-                alert("你不能打这个分数!");
-                return;
-            }
-        }
-        clearInterval(this.timer);
+        
         this.setState({
             confirm: true,
+            vote: temp,
         })
 
-        const score = this.state.score;
-        let result = {
-            name: this.state.name,
-            score: score,
-            ave,
-        }
-        this.socket.emit('auditScoreOver',result);
+        let result = {name,score,ave}
+        this.socket.emit('auditScoreOver', result);
     }
 
     renderline = (line) =>{ 
@@ -283,9 +274,9 @@ class Audit extends Component{
         if(JSON.stringify(info) === '{}'){
             return(
                 <div className={classes.wait}>
-                 <Typography variant="h4">
-                    等待打分开始...
-                 </Typography>
+                    <Typography variant="h4">
+                        等待打分开始...
+                    </Typography>
                 </div>
             )
         }else{
@@ -299,8 +290,7 @@ class Audit extends Component{
 
     render(){
         const {classes} = this.props;
-        const {confirm} = this.state;
-        console.log(confirm);
+        let {vote} = this.state;
 
         return(
             <div className={classes.root}>
@@ -327,7 +317,7 @@ class Audit extends Component{
                             {this.renderline(4)}
                         <Typography variant="h5" className={classes.line}>团队</Typography>
                             {this.renderline(5)}
-                        </div>
+                    </div>
                     <div className={classes.info}>
                         <Typography variant="h5">
                             当前打分
@@ -336,23 +326,16 @@ class Audit extends Component{
                         <Typography variant="h1" className={classes.grade}>
                             {this.state.ave}
                         </Typography>
-                        <Typography variant="h5" className={classes.notice}>
-                            注意
+                        <Typography variant="h4" className={classes.notice}>
+                            注意剩余评分次数
                         </Typography>
-                        <Paper elevation={5} className={classes.mesNotice}>
-                            <Typography variant="h6" style={{color:'white'}}>
-                                {this.state.highLeft > 0?
-                                    `你还可以为${this.state.highLeft}个小组打90分及以上的成绩`:
-                                    "你不能再打90分及以上的成绩了"}
-                            </Typography>
-                        </Paper>
-                        <Paper elevation={5} className={classes.mesNotice}>
-                            <Typography variant="h6" style={{color:'white'}}>
-                                {this.state.lowleft > 0?
-                                    `你还可以为${this.state.lowleft}个小组打70分以下的成绩`:
-                                    "你不能再打70分以下的成绩了"}
-                            </Typography>
-                        </Paper>
+                        <div style={{margin:"20px 0 0 0"}}>
+                        <Typography variant="h5" className={classes.left}>100: {vote[0]}</Typography>
+                        <Typography variant="h5" className={classes.left}>90: &nbsp;&nbsp;{vote[1]}</Typography>
+                        <Typography variant="h5" className={classes.left}>80: &nbsp;&nbsp;{vote[2]}</Typography>
+                        <Typography variant="h5" className={classes.left}>70: &nbsp;&nbsp;{vote[3]}</Typography>
+                        <Typography variant="h5" className={classes.left}>60: &nbsp;&nbsp;{vote[4]}</Typography>
+                        </div>
                     </div>
                     <Button className={classes.confirm} variant="contained" color="primary" disabled={this.state.confirm} onClick={this.confirm}>
                         确认
