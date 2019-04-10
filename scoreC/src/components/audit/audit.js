@@ -330,11 +330,11 @@ class Audit extends Component{
                             注意剩余评分次数
                         </Typography>
                         <div style={{margin:"20px 0 0 0"}}>
-                        <Typography variant="h5" className={classes.left}>100: {vote[0]}</Typography>
-                        <Typography variant="h5" className={classes.left}>90: &nbsp;&nbsp;{vote[1]}</Typography>
-                        <Typography variant="h5" className={classes.left}>80: &nbsp;&nbsp;{vote[2]}</Typography>
-                        <Typography variant="h5" className={classes.left}>70: &nbsp;&nbsp;{vote[3]}</Typography>
-                        <Typography variant="h5" className={classes.left}>60: &nbsp;&nbsp;{vote[4]}</Typography>
+                        <Typography variant="h5" className={classes.left}>100: <span style={{margin:'0 0 0 20px'}}>{vote[0]}</span></Typography>
+                        <Typography variant="h5" className={classes.left}>90: <span style={{margin:'0 0 0 30px'}}>{vote[1]}</span></Typography>
+                        <Typography variant="h5" className={classes.left}>80: <span style={{margin:'0 0 0 30px'}}>{vote[2]}</span></Typography>
+                        <Typography variant="h5" className={classes.left}>70: <span style={{margin:'0 0 0 30px'}}>{vote[3]}</span></Typography>
+                        <Typography variant="h5" className={classes.left}>60: <span style={{margin:'0 0 0 30px'}}>{vote[4]}</span></Typography>
                         </div>
                     </div>
                     <Button className={classes.confirm} variant="contained" color="primary" disabled={this.state.confirm} onClick={this.confirm}>

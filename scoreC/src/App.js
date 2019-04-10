@@ -42,7 +42,7 @@ class App extends Component {
             let auth = res.data.auth;
             if( auth === 1 ){
               this.props.login( values.number);
-              his.push('/animate');
+              his.push('/audit');
             }else if(auth === 2){
               this.props.login( values.number);
               his.push('/audit');

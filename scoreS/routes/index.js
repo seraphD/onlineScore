@@ -133,7 +133,9 @@ router.post('/login', (req, res) => {
       }
     }
   }else if(reconnect === 1){
+    console.log(number);
     if(Reconnect(number)){
+      console.log(1);
       auth = 2;
     }else auto = 0;
   }
